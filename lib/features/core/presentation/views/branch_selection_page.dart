@@ -50,7 +50,7 @@ class _BranchSelectionPageState extends State<BranchSelectionPage> {
   Future<void> _initBranches() async {
     await _viewModel.loadBranches();
     if (!mounted) return;
-    if (_roleScope == MobileRoleScope.employee &&
+    if (_roleScope == MobileRoleScope.technician &&
         _viewModel.branches.length == 1) {
       setState(() => _isAutoEntering = true);
       await _onBranchSelected(_viewModel.branches.first);
@@ -59,9 +59,10 @@ class _BranchSelectionPageState extends State<BranchSelectionPage> {
 
   MobileRoleScope get _roleScope {
     if (getIt.isRegistered<SessionStorage>()) {
-      return RoleRouter.resolveScope(getIt<SessionStorage>().roles);
+      return RoleRouter.resolveScopeOrNull(getIt<SessionStorage>().roles) ??
+          MobileRoleScope.technician;
     }
-    return MobileRoleScope.employee;
+    return MobileRoleScope.technician;
   }
 
   Future<void> _onBranchSelected(Branch branch) async {
@@ -237,7 +238,7 @@ class _BranchSelectionPageState extends State<BranchSelectionPage> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
-    final isAdmin = _roleScope == MobileRoleScope.ownerAdmin;
+    final isAdmin = _roleScope == MobileRoleScope.workshopAdmin;
 
     return ListenableBuilder(
       listenable: _viewModel,
