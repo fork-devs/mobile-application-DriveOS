@@ -9,6 +9,7 @@ import 'package:mobile_application_driveos/features/auth/presentation/controller
 import 'package:mobile_application_driveos/features/auth/presentation/views/forgot_password_page.dart';
 import 'package:mobile_application_driveos/features/auth/presentation/views/login_page.dart';
 import 'package:mobile_application_driveos/features/auth/presentation/views/register_page.dart';
+import 'package:mobile_application_driveos/features/core/presentation/views/branch_selection_page.dart';
 
 /// Builds the declarative [GoRouter] configuration for DriveOS Mobile.
 class AppRouter {
@@ -41,10 +42,7 @@ class AppRouter {
         ),
         GoRoute(
           path: '/branches',
-          builder: (context, state) => const _PlaceholderScreen(
-            title: 'Select Branch',
-            subtitle: 'Core bounded context pending implementation.',
-          ),
+          builder: (context, state) => const BranchSelectionPage(),
         ),
         GoRoute(
           path: '/main',

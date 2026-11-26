@@ -17,6 +17,7 @@ import 'package:mobile_application_driveos/features/core/infrastructure/remote/b
 import 'package:mobile_application_driveos/features/core/infrastructure/remote/profile_api.dart';
 import 'package:mobile_application_driveos/features/core/infrastructure/remote/workshop_api.dart';
 import 'package:mobile_application_driveos/features/core/infrastructure/repositories/core_repository_impl.dart';
+import 'package:mobile_application_driveos/features/core/presentation/controllers/branch_selection_view_model.dart';
 import 'package:mobile_application_driveos/features/fleet/application/fleet_application.dart';
 import 'package:mobile_application_driveos/features/fleet/domain/fleet_domain.dart';
 import 'package:mobile_application_driveos/features/fleet/infrastructure/remote/appointment_api.dart';
@@ -637,6 +638,19 @@ void setupDependencies() {
       () => ForgotPasswordViewModel(
         forgotPassword: getIt<ForgotPassword>(),
         resetPassword: getIt<ResetPassword>(),
+      ),
+    );
+  }
+  if (!getIt.isRegistered<BranchSelectionViewModel>()) {
+    getIt.registerFactory<BranchSelectionViewModel>(
+      () => BranchSelectionViewModel(
+        getWorkshopsByOwner: getIt<GetWorkshopsByOwner>(),
+        getBranchesByWorkshop: getIt<GetBranchesByWorkshop>(),
+        createBranch: getIt<CreateBranch>(),
+        updateBranch: getIt<UpdateBranch>(),
+        uploadBranchBanner: getIt<UploadBranchBanner>(),
+        selectActiveBranch: getIt<SelectActiveBranch>(),
+        sessionStorage: getIt<SessionStorage>(),
       ),
     );
   }
