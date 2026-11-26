@@ -162,7 +162,94 @@ class ApiConstants {
 
   // Work Orders (erp-work-order-service)
   static const String workOrders = '/api/v1/work-orders';
+  static const String workOrdersMe = '/api/v1/work-orders/me';
   static const String services = '/api/v1/services';
+
+  /// Returns the work order endpoint for [orderId].
+  static String workOrderById(String orderId) => '/api/v1/work-orders/$orderId';
+
+  /// Returns the work order items endpoint for [orderId].
+  static String workOrderItems(String orderId) =>
+      '/api/v1/work-orders/$orderId/items';
+
+  /// Returns the work order transition endpoint for [orderId].
+  static String workOrderTransition(String orderId) =>
+      '/api/v1/work-orders/$orderId/transition';
+
+  /// Returns the work order completion endpoint for [orderId].
+  static String workOrderComplete(String orderId) =>
+      '/api/v1/work-orders/$orderId/complete';
+
+  /// Returns the work order quote endpoint for [orderId].
+  static String workOrderQuote(String orderId) =>
+      '/api/v1/work-orders/$orderId/quote';
+
+  /// Returns the work order approval endpoint for [orderId].
+  static String workOrderApprove(String orderId) =>
+      '/api/v1/work-orders/$orderId/approve';
+
+  /// Returns the work order rejection endpoint for [orderId].
+  static String workOrderReject(String orderId) =>
+      '/api/v1/work-orders/$orderId/reject';
+
+  /// Returns the work order cancellation endpoint for [orderId].
+  static String workOrderCancel(String orderId) =>
+      '/api/v1/work-orders/$orderId/cancel';
+
+  /// Returns the tasks endpoint for [workOrderId].
+  static String workOrderTasks(String workOrderId) =>
+      '/api/v1/work-orders/$workOrderId/tasks';
+
+  /// Returns the task endpoint for [taskId] in [workOrderId].
+  static String workOrderTaskById(String workOrderId, String taskId) =>
+      '/api/v1/work-orders/$workOrderId/tasks/$taskId';
+
+  /// Returns the task evidence upload endpoint.
+  static String workOrderTaskEvidence(String workOrderId, String taskId) =>
+      '/api/v1/work-orders/$workOrderId/tasks/$taskId/evidence';
+
+  /// Returns the mechanic assignment endpoint for [taskId].
+  static String workOrderTaskAssignMechanic(String taskId) =>
+      '/api/v1/work-order-tasks/$taskId/assign-mechanic';
+
+  /// Returns the task start endpoint for [taskId].
+  static String workOrderTaskStart(String taskId) =>
+      '/api/v1/work-order-tasks/$taskId/start';
+
+  /// Returns the task complete endpoint for [taskId].
+  static String workOrderTaskComplete(String taskId) =>
+      '/api/v1/work-order-tasks/$taskId/complete';
+
+  /// Returns the task reopen endpoint for [taskId].
+  static String workOrderTaskReopen(String taskId) =>
+      '/api/v1/work-order-tasks/$taskId/reopen';
+
+  /// Returns the task products endpoint for [taskId].
+  static String workOrderTaskProducts(String taskId) =>
+      '/api/v1/work-order-tasks/$taskId/products';
+
+  /// Returns the task product endpoint for [productId] on [taskId].
+  static String workOrderTaskProductById(String taskId, String productId) =>
+      '/api/v1/work-order-tasks/$taskId/products/$productId';
+
+  /// Returns the supplements send-to-customer endpoint for [orderId].
+  static String workOrderSupplementsSend(String orderId) =>
+      '/api/v1/work-orders/$orderId/supplements/send-to-customer';
+
+  /// Returns the supplements approval endpoint for [orderId].
+  static String workOrderSupplementsApprove(String orderId) =>
+      '/api/v1/work-orders/$orderId/supplements/approve';
+
+  /// Returns the supplements rejection endpoint for [orderId].
+  static String workOrderSupplementsReject(String orderId) =>
+      '/api/v1/work-orders/$orderId/supplements/reject';
+
+  /// Returns the work order evidences endpoint for [orderId].
+  static String workOrderEvidences(String orderId) =>
+      '/api/v1/work-orders/$orderId/evidences';
+
+  /// Returns the workshop service endpoint for [serviceId].
+  static String serviceById(String serviceId) => '/api/v1/services/$serviceId';
 
   // Inventory (erp-inventory-service)
   static const String inventoryProducts = '/api/v1/inventory/products';
