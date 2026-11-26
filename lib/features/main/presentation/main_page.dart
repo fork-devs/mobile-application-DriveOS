@@ -11,6 +11,7 @@ import 'package:mobile_application_driveos/features/analytics/presentation/views
 import 'package:mobile_application_driveos/features/analytics/presentation/views/employee_dashboard_page.dart';
 import 'package:mobile_application_driveos/features/auth/application/auth_application.dart';
 import 'package:mobile_application_driveos/features/customer/presentation/views/customer_home_page.dart';
+import 'package:mobile_application_driveos/features/operations/presentation/views/work_orders_page.dart';
 
 class _NavDestinationSpec {
   final Key key;
@@ -149,12 +150,7 @@ class _MainPageState extends State<MainPage>
           labelKey: 'orders_tab',
           page: override != null && override.length > 1
               ? override[1]
-              : _ShellTabScaffold(
-                  titleKey: 'orders_tab',
-                  icon: Icons.build_outlined,
-                  onSwitchBranch: () => context.go('/branches'),
-                  onSignOut: _signOut,
-                ),
+              : const WorkOrdersPage(),
         ),
         _NavDestinationSpec(
           key: const Key('nav_appointments'),
