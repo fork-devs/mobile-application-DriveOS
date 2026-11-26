@@ -188,8 +188,9 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: _handleLogin,
                 ),
                 const SizedBox(height: 22),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Text(
                       loc.translate('no_account'),

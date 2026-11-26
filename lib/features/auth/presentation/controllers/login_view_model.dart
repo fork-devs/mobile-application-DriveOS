@@ -7,8 +7,7 @@ class LoginViewModel extends ChangeNotifier {
   final LoginWithPassword _loginWithPassword;
 
   /// Creates a [LoginViewModel] backed by [_loginWithPassword].
-  LoginViewModel({required LoginWithPassword loginWithPassword})
-      : _loginWithPassword = loginWithPassword;
+  LoginViewModel({required this._loginWithPassword});
 
   /// Whether an authentication request is currently in progress.
   bool isLoading = false;

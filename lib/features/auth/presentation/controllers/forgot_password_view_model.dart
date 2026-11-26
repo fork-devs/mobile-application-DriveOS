@@ -20,10 +20,9 @@ class ForgotPasswordViewModel extends ChangeNotifier {
 
   /// Creates a [ForgotPasswordViewModel].
   ForgotPasswordViewModel({
-    required ForgotPassword forgotPassword,
-    required ResetPassword resetPassword,
-  })  : _forgotPassword = forgotPassword,
-        _resetPassword = resetPassword;
+    required this._forgotPassword,
+    required this._resetPassword,
+  });
 
   /// Current active step in the recovery flow.
   ForgotPasswordStep step = ForgotPasswordStep.requestEmail;

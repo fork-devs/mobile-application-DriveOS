@@ -22,12 +22,10 @@ class RegisterViewModel extends ChangeNotifier {
 
   /// Creates a [RegisterViewModel].
   RegisterViewModel({
-    required SendOtp sendOtp,
-    required VerifyOtp verifyOtp,
-    required RegisterAccount registerAccount,
-  })  : _sendOtp = sendOtp,
-        _verifyOtp = verifyOtp,
-        _registerAccount = registerAccount;
+    required this._sendOtp,
+    required this._verifyOtp,
+    required this._registerAccount,
+  });
 
   /// Current active step in the registration flow.
   RegisterStep step = RegisterStep.enterEmail;

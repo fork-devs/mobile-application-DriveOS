@@ -91,7 +91,7 @@ class AuthScaffold extends StatelessWidget {
                       SizedBox(height: screenHeight < 700 ? 10 : 18),
                       const DriveOSLogo(
                         size: LogoSize.large,
-                        variant: LogoVariant.light,
+                        isDark: true,
                       ),
                       const SizedBox(height: 8),
                       Text(
