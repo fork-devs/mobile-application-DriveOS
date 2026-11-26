@@ -8,6 +8,12 @@ import 'package:mobile_application_driveos/features/auth/domain/auth_domain.dart
 import 'package:mobile_application_driveos/features/auth/infrastructure/remote/auth_api.dart';
 import 'package:mobile_application_driveos/features/auth/infrastructure/remote/user_api.dart';
 import 'package:mobile_application_driveos/features/auth/infrastructure/repositories/auth_repository_impl.dart';
+import 'package:mobile_application_driveos/features/core/application/core_application.dart';
+import 'package:mobile_application_driveos/features/core/domain/core_domain.dart';
+import 'package:mobile_application_driveos/features/core/infrastructure/remote/branch_api.dart';
+import 'package:mobile_application_driveos/features/core/infrastructure/remote/profile_api.dart';
+import 'package:mobile_application_driveos/features/core/infrastructure/remote/workshop_api.dart';
+import 'package:mobile_application_driveos/features/core/infrastructure/repositories/core_repository_impl.dart';
 
 /// Global [GetIt] service locator instance for DriveOS Mobile.
 final GetIt getIt = GetIt.instance;
@@ -133,6 +139,163 @@ void setupDependencies() {
   if (!getIt.isRegistered<UploadUserAvatar>()) {
     getIt.registerLazySingleton<UploadUserAvatar>(
       () => UploadUserAvatar(getIt<AuthRepository>()),
+    );
+  }
+
+  // Core (Tenant & Profiles) Bounded Context
+  if (!getIt.isRegistered<WorkshopApi>()) {
+    getIt.registerLazySingleton<WorkshopApi>(
+      () => WorkshopApi(getIt<ApiClient>()),
+    );
+  }
+
+  if (!getIt.isRegistered<BranchApi>()) {
+    getIt.registerLazySingleton<BranchApi>(
+      () => BranchApi(getIt<ApiClient>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ProfileApi>()) {
+    getIt.registerLazySingleton<ProfileApi>(
+      () => ProfileApi(getIt<ApiClient>()),
+    );
+  }
+
+  if (!getIt.isRegistered<CoreRepository>()) {
+    getIt.registerLazySingleton<CoreRepository>(
+      () => CoreRepositoryImpl(
+        workshopApi: getIt<WorkshopApi>(),
+        branchApi: getIt<BranchApi>(),
+        profileApi: getIt<ProfileApi>(),
+        sessionStorage: getIt<SessionStorage>(),
+        eventBus: getIt<DomainEventBus>(),
+      ),
+    );
+  }
+
+  if (!getIt.isRegistered<GetWorkshopsByOwner>()) {
+    getIt.registerLazySingleton<GetWorkshopsByOwner>(
+      () => GetWorkshopsByOwner(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<GetWorkshopById>()) {
+    getIt.registerLazySingleton<GetWorkshopById>(
+      () => GetWorkshopById(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<CreateWorkshop>()) {
+    getIt.registerLazySingleton<CreateWorkshop>(
+      () => CreateWorkshop(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<UpdateWorkshop>()) {
+    getIt.registerLazySingleton<UpdateWorkshop>(
+      () => UpdateWorkshop(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<GetBranchesByWorkshop>()) {
+    getIt.registerLazySingleton<GetBranchesByWorkshop>(
+      () => GetBranchesByWorkshop(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<GetBranchById>()) {
+    getIt.registerLazySingleton<GetBranchById>(
+      () => GetBranchById(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<CreateBranch>()) {
+    getIt.registerLazySingleton<CreateBranch>(
+      () => CreateBranch(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<UpdateBranch>()) {
+    getIt.registerLazySingleton<UpdateBranch>(
+      () => UpdateBranch(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<UploadBranchBanner>()) {
+    getIt.registerLazySingleton<UploadBranchBanner>(
+      () => UploadBranchBanner(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<SelectActiveBranch>()) {
+    getIt.registerLazySingleton<SelectActiveBranch>(
+      () => SelectActiveBranch(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<GetPlans>()) {
+    getIt.registerLazySingleton<GetPlans>(
+      () => GetPlans(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<AssignBranchSubscription>()) {
+    getIt.registerLazySingleton<AssignBranchSubscription>(
+      () => AssignBranchSubscription(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<CancelBranchSubscription>()) {
+    getIt.registerLazySingleton<CancelBranchSubscription>(
+      () => CancelBranchSubscription(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<GetMyProfileContext>()) {
+    getIt.registerLazySingleton<GetMyProfileContext>(
+      () => GetMyProfileContext(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<UpdateMyProfileImage>()) {
+    getIt.registerLazySingleton<UpdateMyProfileImage>(
+      () => UpdateMyProfileImage(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<UploadMyProfileImage>()) {
+    getIt.registerLazySingleton<UploadMyProfileImage>(
+      () => UploadMyProfileImage(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<LookupProfileByDocument>()) {
+    getIt.registerLazySingleton<LookupProfileByDocument>(
+      () => LookupProfileByDocument(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<CreateOwnerProfile>()) {
+    getIt.registerLazySingleton<CreateOwnerProfile>(
+      () => CreateOwnerProfile(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<UpdateOwnerProfile>()) {
+    getIt.registerLazySingleton<UpdateOwnerProfile>(
+      () => UpdateOwnerProfile(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<CreateEmployeeProfile>()) {
+    getIt.registerLazySingleton<CreateEmployeeProfile>(
+      () => CreateEmployeeProfile(getIt<CoreRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<UpdateEmployeeProfile>()) {
+    getIt.registerLazySingleton<UpdateEmployeeProfile>(
+      () => UpdateEmployeeProfile(getIt<CoreRepository>()),
     );
   }
 }
