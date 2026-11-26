@@ -115,7 +115,7 @@ class _MainPageState extends State<MainPage>
     if (getIt.isRegistered<Logout>()) {
       await getIt<Logout>()();
     } else if (getIt.isRegistered<SessionStorage>()) {
-      await getIt<SessionStorage>().clear();
+      await getIt<SessionStorage>().clearSession();
     }
     if (mounted) {
       context.go('/login');

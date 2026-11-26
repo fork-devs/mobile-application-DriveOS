@@ -20,14 +20,11 @@ class CustomerHomeViewModel extends ChangeNotifier {
   /// Creates a [CustomerHomeViewModel].
   CustomerHomeViewModel({
     required this._manageWorkOrders,
-    ManageQuotes? manageQuotes,
-    GetAnalytics? getAnalytics,
-    GetVehicles? getVehicles,
-    SessionStorage? sessionStorage,
-  })  : _manageQuotes = manageQuotes,
-        _getAnalytics = getAnalytics,
-        _getVehicles = getVehicles,
-        _sessionStorage = sessionStorage;
+    this._manageQuotes,
+    this._getAnalytics,
+    this._getVehicles,
+    this._sessionStorage,
+  });
 
   /// Whether portal data is currently loading.
   bool isLoading = false;
