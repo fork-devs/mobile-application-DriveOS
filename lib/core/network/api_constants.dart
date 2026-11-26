@@ -253,6 +253,32 @@ class ApiConstants {
 
   // Inventory (erp-inventory-service)
   static const String inventoryProducts = '/api/v1/inventory/products';
+  static const String inventorySpareParts = '/api/v1/inventory/spare-parts';
+  static const String inventoryStockMovements =
+      '/api/v1/inventory/stock/movements';
+  static const String inventoryStockReserve = '/api/v1/inventory/stock/reserve';
+  static const String inventoryStockCommit = '/api/v1/inventory/stock/commit';
+  static const String inventoryStockRelease = '/api/v1/inventory/stock/release';
+
+  /// Returns the inventory product endpoint for [productId].
+  static String inventoryProductById(String productId) =>
+      '/api/v1/inventory/products/$productId';
+
+  /// Returns the inventory product batches endpoint for [productId].
+  static String inventoryProductBatches(String productId) =>
+      '/api/v1/inventory/products/$productId/batches';
+
+  /// Returns the inventory product image upload endpoint for [productId].
+  static String inventoryProductImage(String productId) =>
+      '/api/v1/inventory/products/$productId/image';
+
+  /// Returns the spare part endpoint for [sparePartId].
+  static String inventorySparePartById(String sparePartId) =>
+      '/api/v1/inventory/spare-parts/$sparePartId';
+
+  /// Returns the stock balance endpoint for [sparePartId] in [branchId].
+  static String inventoryStockBalance(String sparePartId, String branchId) =>
+      '/api/v1/inventory/stock/balance/$sparePartId/branch/$branchId';
 
   // Billing (erp-billing-service)
   static const String quotes = '/api/v1/quotes';

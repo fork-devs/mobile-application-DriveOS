@@ -20,6 +20,10 @@ import 'package:mobile_application_driveos/features/fleet/infrastructure/remote/
 import 'package:mobile_application_driveos/features/fleet/infrastructure/remote/customer_vehicle_api.dart';
 import 'package:mobile_application_driveos/features/fleet/infrastructure/remote/registration_api.dart';
 import 'package:mobile_application_driveos/features/fleet/infrastructure/repositories/fleet_repository_impl.dart';
+import 'package:mobile_application_driveos/features/inventory/application/inventory_application.dart';
+import 'package:mobile_application_driveos/features/inventory/domain/inventory_domain.dart';
+import 'package:mobile_application_driveos/features/inventory/infrastructure/remote/inventory_api.dart';
+import 'package:mobile_application_driveos/features/inventory/infrastructure/repositories/inventory_repository_impl.dart';
 import 'package:mobile_application_driveos/features/operations/application/operations_application.dart';
 import 'package:mobile_application_driveos/features/operations/domain/operations_domain.dart';
 import 'package:mobile_application_driveos/features/operations/infrastructure/remote/service_api.dart';
@@ -468,6 +472,31 @@ void setupDependencies() {
   if (!getIt.isRegistered<ManageWorkshopServices>()) {
     getIt.registerLazySingleton<ManageWorkshopServices>(
       () => ManageWorkshopServices(getIt<OperationsRepository>()),
+    );
+  }
+
+  // Inventory Bounded Context
+  if (!getIt.isRegistered<InventoryApi>()) {
+    getIt.registerLazySingleton<InventoryApi>(
+      () => InventoryApi(getIt<ApiClient>()),
+    );
+  }
+
+  if (!getIt.isRegistered<InventoryRepository>()) {
+    getIt.registerLazySingleton<InventoryRepository>(
+      () => InventoryRepositoryImpl(inventoryApi: getIt<InventoryApi>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageInventoryProducts>()) {
+    getIt.registerLazySingleton<ManageInventoryProducts>(
+      () => ManageInventoryProducts(getIt<InventoryRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageSparePartsAndStock>()) {
+    getIt.registerLazySingleton<ManageSparePartsAndStock>(
+      () => ManageSparePartsAndStock(getIt<InventoryRepository>()),
     );
   }
 }
