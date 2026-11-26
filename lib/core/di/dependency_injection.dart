@@ -19,6 +19,8 @@ import 'package:mobile_application_driveos/features/core/infrastructure/remote/w
 import 'package:mobile_application_driveos/features/core/infrastructure/repositories/core_repository_impl.dart';
 import 'package:mobile_application_driveos/features/core/presentation/controllers/branch_selection_view_model.dart';
 import 'package:mobile_application_driveos/features/customer/presentation/controllers/customer_home_view_model.dart';
+import 'package:mobile_application_driveos/features/analytics/presentation/controllers/dashboard_view_model.dart';
+import 'package:mobile_application_driveos/features/analytics/presentation/controllers/employee_dashboard_view_model.dart';
 import 'package:mobile_application_driveos/features/fleet/application/fleet_application.dart';
 import 'package:mobile_application_driveos/features/fleet/domain/fleet_domain.dart';
 import 'package:mobile_application_driveos/features/fleet/infrastructure/remote/appointment_api.dart';
@@ -663,6 +665,24 @@ void setupDependencies() {
         getAnalytics: getIt<GetAnalytics>(),
         getVehicles: getIt<GetVehicles>(),
         sessionStorage: getIt<SessionStorage>(),
+      ),
+    );
+  }
+  if (!getIt.isRegistered<DashboardViewModel>()) {
+    getIt.registerFactory<DashboardViewModel>(
+      () => DashboardViewModel(
+        getAnalytics: getIt<GetAnalytics>(),
+        sessionStorage: getIt<SessionStorage>(),
+        eventBus: getIt<DomainEventBus>(),
+      ),
+    );
+  }
+  if (!getIt.isRegistered<EmployeeDashboardViewModel>()) {
+    getIt.registerFactory<EmployeeDashboardViewModel>(
+      () => EmployeeDashboardViewModel(
+        getAnalytics: getIt<GetAnalytics>(),
+        sessionStorage: getIt<SessionStorage>(),
+        eventBus: getIt<DomainEventBus>(),
       ),
     );
   }

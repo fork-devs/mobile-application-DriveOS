@@ -7,6 +7,8 @@ import 'package:mobile_application_driveos/core/storage/session_storage.dart';
 import 'package:mobile_application_driveos/core/theme/app_theme.dart';
 import 'package:mobile_application_driveos/core/widgets/driveos_empty_state.dart';
 import 'package:mobile_application_driveos/core/widgets/driveos_floating_nav_bar.dart';
+import 'package:mobile_application_driveos/features/analytics/presentation/views/dashboard_page.dart';
+import 'package:mobile_application_driveos/features/analytics/presentation/views/employee_dashboard_page.dart';
 import 'package:mobile_application_driveos/features/auth/application/auth_application.dart';
 import 'package:mobile_application_driveos/features/customer/presentation/views/customer_home_page.dart';
 
@@ -133,11 +135,11 @@ class _MainPageState extends State<MainPage>
           labelKey: 'dashboard_tab',
           page: override != null && override.isNotEmpty
               ? override[0]
-              : _ShellTabScaffold(
-                  titleKey: 'dashboard_tab',
-                  icon: Icons.space_dashboard_outlined,
-                  onSwitchBranch: () => context.go('/branches'),
-                  onSignOut: _signOut,
+              : DashboardPage(
+                  onNavigateToOrders: () => _onDestinationSelected(1),
+                  onNavigateToAppointments: () => _onDestinationSelected(2),
+                  onNavigateToInventory: () => _onDestinationSelected(3),
+                  onNavigateToIot: () => _onDestinationSelected(4),
                 ),
         ),
         _NavDestinationSpec(
@@ -207,11 +209,9 @@ class _MainPageState extends State<MainPage>
         labelKey: 'dashboard_tab',
         page: override != null && override.isNotEmpty
             ? override[0]
-            : _ShellTabScaffold(
-                titleKey: 'dashboard_tab',
-                icon: Icons.space_dashboard_outlined,
-                onSwitchBranch: () => context.go('/branches'),
-                onSignOut: _signOut,
+            : EmployeeDashboardPage(
+                onNavigateToOrders: () => _onDestinationSelected(1),
+                onNavigateToTelemetry: () => _onDestinationSelected(2),
               ),
       ),
       _NavDestinationSpec(
