@@ -28,6 +28,10 @@ import 'package:mobile_application_driveos/features/billing/application/billing_
 import 'package:mobile_application_driveos/features/billing/domain/billing_domain.dart';
 import 'package:mobile_application_driveos/features/billing/infrastructure/remote/billing_api.dart';
 import 'package:mobile_application_driveos/features/billing/infrastructure/repositories/billing_repository_impl.dart';
+import 'package:mobile_application_driveos/features/iot/application/iot_application.dart';
+import 'package:mobile_application_driveos/features/iot/domain/iot_domain.dart';
+import 'package:mobile_application_driveos/features/iot/infrastructure/remote/iot_api.dart';
+import 'package:mobile_application_driveos/features/iot/infrastructure/repositories/iot_repository_impl.dart';
 import 'package:mobile_application_driveos/features/operations/application/operations_application.dart';
 import 'package:mobile_application_driveos/features/operations/domain/operations_domain.dart';
 import 'package:mobile_application_driveos/features/operations/infrastructure/remote/service_api.dart';
@@ -532,6 +536,29 @@ void setupDependencies() {
   if (!getIt.isRegistered<ManageVouchers>()) {
     getIt.registerLazySingleton<ManageVouchers>(
       () => ManageVouchers(getIt<BillingRepository>()),
+    );
+  }
+
+  // IoT & Telemetry Bounded Context
+  if (!getIt.isRegistered<IotApi>()) {
+    getIt.registerLazySingleton<IotApi>(() => IotApi(getIt<ApiClient>()));
+  }
+
+  if (!getIt.isRegistered<IotRepository>()) {
+    getIt.registerLazySingleton<IotRepository>(
+      () => IotRepositoryImpl(iotApi: getIt<IotApi>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageObd2Devices>()) {
+    getIt.registerLazySingleton<ManageObd2Devices>(
+      () => ManageObd2Devices(getIt<IotRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageTelemetryAndDiagnostics>()) {
+    getIt.registerLazySingleton<ManageTelemetryAndDiagnostics>(
+      () => ManageTelemetryAndDiagnostics(getIt<IotRepository>()),
     );
   }
 }
