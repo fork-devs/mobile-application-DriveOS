@@ -24,6 +24,10 @@ import 'package:mobile_application_driveos/features/inventory/application/invent
 import 'package:mobile_application_driveos/features/inventory/domain/inventory_domain.dart';
 import 'package:mobile_application_driveos/features/inventory/infrastructure/remote/inventory_api.dart';
 import 'package:mobile_application_driveos/features/inventory/infrastructure/repositories/inventory_repository_impl.dart';
+import 'package:mobile_application_driveos/features/billing/application/billing_application.dart';
+import 'package:mobile_application_driveos/features/billing/domain/billing_domain.dart';
+import 'package:mobile_application_driveos/features/billing/infrastructure/remote/billing_api.dart';
+import 'package:mobile_application_driveos/features/billing/infrastructure/repositories/billing_repository_impl.dart';
 import 'package:mobile_application_driveos/features/operations/application/operations_application.dart';
 import 'package:mobile_application_driveos/features/operations/domain/operations_domain.dart';
 import 'package:mobile_application_driveos/features/operations/infrastructure/remote/service_api.dart';
@@ -497,6 +501,37 @@ void setupDependencies() {
   if (!getIt.isRegistered<ManageSparePartsAndStock>()) {
     getIt.registerLazySingleton<ManageSparePartsAndStock>(
       () => ManageSparePartsAndStock(getIt<InventoryRepository>()),
+    );
+  }
+
+  // Billing Bounded Context
+  if (!getIt.isRegistered<BillingApi>()) {
+    getIt.registerLazySingleton<BillingApi>(
+      () => BillingApi(getIt<ApiClient>()),
+    );
+  }
+
+  if (!getIt.isRegistered<BillingRepository>()) {
+    getIt.registerLazySingleton<BillingRepository>(
+      () => BillingRepositoryImpl(billingApi: getIt<BillingApi>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageQuotes>()) {
+    getIt.registerLazySingleton<ManageQuotes>(
+      () => ManageQuotes(getIt<BillingRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageCheckouts>()) {
+    getIt.registerLazySingleton<ManageCheckouts>(
+      () => ManageCheckouts(getIt<BillingRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageVouchers>()) {
+    getIt.registerLazySingleton<ManageVouchers>(
+      () => ManageVouchers(getIt<BillingRepository>()),
     );
   }
 }
