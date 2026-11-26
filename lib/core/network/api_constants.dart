@@ -47,13 +47,42 @@ class ApiConstants {
   static String userAvatar(String userId) => '/api/v1/users/$userId/avatar';
 
   // Tenant & Profiles (erp-tenant-service)
+  static const String plans = '/api/v1/plans';
   static const String workshops = '/api/v1/workshops';
   static const String branches = '/api/v1/branches';
+  static const String owners = '/api/v1/owners';
+  static const String employees = '/api/v1/employees';
+  static const String profiles = '/api/v1/profiles';
   static const String profilesMe = '/api/v1/profiles/me';
+  static const String profilesMeImage = '/api/v1/profiles/me/image';
+  static const String profilesMeImageUpload = '/api/v1/profiles/me/image/upload';
   static const String profilesRoles = '/api/v1/profiles/roles';
+
+  /// Returns the workshop endpoint for [workshopId].
+  static String workshopById(String workshopId) =>
+      '/api/v1/workshops/$workshopId';
 
   /// Returns the branch endpoint for [branchId].
   static String branchById(String branchId) => '/api/v1/branches/$branchId';
+
+  /// Returns the branch banner upload endpoint for [branchId].
+  static String branchBanner(String branchId) =>
+      '/api/v1/branches/$branchId/banner';
+
+  /// Returns the branch subscription creation endpoint for [branchId].
+  static String branchSubscriptions(String branchId) =>
+      '/api/v1/branches/$branchId/subscriptions';
+
+  /// Returns the branch subscription cancellation endpoint for [branchId].
+  static String branchSubscription(String branchId) =>
+      '/api/v1/branches/$branchId/subscription';
+
+  /// Returns the owner profile endpoint for [ownerId].
+  static String ownerById(String ownerId) => '/api/v1/owners/$ownerId';
+
+  /// Returns the employee profile endpoint for [employeeId].
+  static String employeeById(String employeeId) =>
+      '/api/v1/employees/$employeeId';
 
   // Fleet (erp-fleet-service)
   static const String appointments = '/api/v1/appointments';
