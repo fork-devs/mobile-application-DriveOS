@@ -24,6 +24,7 @@ import 'package:mobile_application_driveos/features/analytics/presentation/contr
 import 'package:mobile_application_driveos/features/operations/presentation/controllers/work_order_detail_view_model.dart';
 import 'package:mobile_application_driveos/features/operations/presentation/controllers/work_orders_view_model.dart';
 import 'package:mobile_application_driveos/features/fleet/presentation/controllers/appointments_view_model.dart';
+import 'package:mobile_application_driveos/features/inventory/presentation/controllers/inventory_view_model.dart';
 import 'package:mobile_application_driveos/features/fleet/application/fleet_application.dart';
 import 'package:mobile_application_driveos/features/fleet/domain/fleet_domain.dart';
 import 'package:mobile_application_driveos/features/fleet/infrastructure/remote/appointment_api.dart';
@@ -713,6 +714,15 @@ void setupDependencies() {
         getAppointments: getIt<GetAppointments>(),
         createAppointment: getIt<CreateAppointment>(),
         lifecycle: getIt<ManageAppointmentLifecycle>(),
+        sessionStorage: getIt<SessionStorage>(),
+        eventBus: getIt<DomainEventBus>(),
+      ),
+    );
+  }
+  if (!getIt.isRegistered<InventoryViewModel>()) {
+    getIt.registerFactory<InventoryViewModel>(
+      () => InventoryViewModel(
+        manageProducts: getIt<ManageInventoryProducts>(),
         sessionStorage: getIt<SessionStorage>(),
         eventBus: getIt<DomainEventBus>(),
       ),

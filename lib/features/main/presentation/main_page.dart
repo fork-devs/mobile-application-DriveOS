@@ -12,6 +12,7 @@ import 'package:mobile_application_driveos/features/analytics/presentation/views
 import 'package:mobile_application_driveos/features/auth/application/auth_application.dart';
 import 'package:mobile_application_driveos/features/customer/presentation/views/customer_home_page.dart';
 import 'package:mobile_application_driveos/features/fleet/presentation/views/appointments_page.dart';
+import 'package:mobile_application_driveos/features/inventory/presentation/views/inventory_page.dart';
 import 'package:mobile_application_driveos/features/operations/presentation/views/work_orders_page.dart';
 
 class _NavDestinationSpec {
@@ -169,12 +170,7 @@ class _MainPageState extends State<MainPage>
           labelKey: 'inventory_tab',
           page: override != null && override.length > 3
               ? override[3]
-              : _ShellTabScaffold(
-                  titleKey: 'inventory_tab',
-                  icon: Icons.inventory_2_outlined,
-                  onSwitchBranch: () => context.go('/branches'),
-                  onSignOut: _signOut,
-                ),
+              : const InventoryPage(),
         ),
         _NavDestinationSpec(
           key: const Key('nav_telemetry'),
