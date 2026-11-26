@@ -215,7 +215,7 @@ class BillingApi {
     final response = await _apiClient.post(
       ApiConstants.voucherPayments(voucherId),
       headers: {
-        if (idempotencyKey != null) 'Idempotency-Key': idempotencyKey,
+        'Idempotency-Key': ?idempotencyKey,
       },
       body: {
         'amount': amount,
