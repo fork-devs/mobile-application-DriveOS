@@ -86,7 +86,79 @@ class ApiConstants {
 
   // Fleet (erp-fleet-service)
   static const String appointments = '/api/v1/appointments';
+  static const String customers = '/api/v1/customers';
   static const String vehicles = '/api/v1/vehicles';
+  static const String customerRegistrations = '/api/v1/customer-registrations';
+  static const String employeeRegistrations = '/api/v1/employee-registrations';
+  static const String employeeRegistrationRequestJoin =
+      '/api/v1/employee-registrations/request-join';
+
+  /// Returns the appointment endpoint for [appointmentId].
+  static String appointmentById(String appointmentId) =>
+      '/api/v1/appointments/$appointmentId';
+
+  /// Returns the appointment confirm endpoint for [appointmentId].
+  static String appointmentConfirm(String appointmentId) =>
+      '/api/v1/appointments/$appointmentId/confirm';
+
+  /// Returns the appointment check-in endpoint for [appointmentId].
+  static String appointmentCheckIn(String appointmentId) =>
+      '/api/v1/appointments/$appointmentId/check-in';
+
+  /// Returns the appointment complete endpoint for [appointmentId].
+  static String appointmentComplete(String appointmentId) =>
+      '/api/v1/appointments/$appointmentId/complete';
+
+  /// Returns the appointment cancel endpoint for [appointmentId].
+  static String appointmentCancel(String appointmentId) =>
+      '/api/v1/appointments/$appointmentId/cancel';
+
+  /// Returns the customer endpoint for [customerId].
+  static String customerById(String customerId) =>
+      '/api/v1/customers/$customerId';
+
+  /// Returns the customer validation endpoint for [customerId].
+  static String customerValidate(String customerId) =>
+      '/api/v1/customers/$customerId/validate';
+
+  /// Returns the vehicles endpoint scoped to [customerId].
+  static String customerVehicles(String customerId) =>
+      '/api/v1/customers/$customerId/vehicles';
+
+  /// Returns the vehicle endpoint for [vehicleId].
+  static String vehicleById(String vehicleId) => '/api/v1/vehicles/$vehicleId';
+
+  /// Returns the vehicles endpoint filtered by [customerId].
+  static String vehiclesByCustomer(String customerId) =>
+      '/api/v1/vehicles/customer/$customerId';
+
+  /// Returns the vehicle validation endpoint for [vehicleId].
+  static String vehicleValidate(String vehicleId) =>
+      '/api/v1/vehicles/$vehicleId/validate';
+
+  /// Returns the vehicle image upload endpoint for [vehicleId].
+  static String vehicleImage(String vehicleId) =>
+      '/api/v1/vehicles/$vehicleId/image';
+
+  /// Returns the customer registration endpoint for [registrationId].
+  static String customerRegistrationById(String registrationId) =>
+      '/api/v1/customer-registrations/$registrationId';
+
+  /// Returns the employee registration endpoint for [registrationId].
+  static String employeeRegistrationById(String registrationId) =>
+      '/api/v1/employee-registrations/$registrationId';
+
+  /// Returns the employee registration approval endpoint for [registrationId].
+  static String employeeRegistrationApprove(String registrationId) =>
+      '/api/v1/employee-registrations/$registrationId/approve';
+
+  /// Returns the employee registration rejection endpoint for [registrationId].
+  static String employeeRegistrationReject(String registrationId) =>
+      '/api/v1/employee-registrations/$registrationId/reject';
+
+  /// Returns the career history endpoint for [employeeId] in [branchId].
+  static String branchEmployeeHistory(String branchId, String employeeId) =>
+      '/api/v1/branches/$branchId/employees/$employeeId/history';
 
   // Work Orders (erp-work-order-service)
   static const String workOrders = '/api/v1/work-orders';

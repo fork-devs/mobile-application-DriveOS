@@ -14,6 +14,12 @@ import 'package:mobile_application_driveos/features/core/infrastructure/remote/b
 import 'package:mobile_application_driveos/features/core/infrastructure/remote/profile_api.dart';
 import 'package:mobile_application_driveos/features/core/infrastructure/remote/workshop_api.dart';
 import 'package:mobile_application_driveos/features/core/infrastructure/repositories/core_repository_impl.dart';
+import 'package:mobile_application_driveos/features/fleet/application/fleet_application.dart';
+import 'package:mobile_application_driveos/features/fleet/domain/fleet_domain.dart';
+import 'package:mobile_application_driveos/features/fleet/infrastructure/remote/appointment_api.dart';
+import 'package:mobile_application_driveos/features/fleet/infrastructure/remote/customer_vehicle_api.dart';
+import 'package:mobile_application_driveos/features/fleet/infrastructure/remote/registration_api.dart';
+import 'package:mobile_application_driveos/features/fleet/infrastructure/repositories/fleet_repository_impl.dart';
 
 /// Global [GetIt] service locator instance for DriveOS Mobile.
 final GetIt getIt = GetIt.instance;
@@ -296,6 +302,113 @@ void setupDependencies() {
   if (!getIt.isRegistered<UpdateEmployeeProfile>()) {
     getIt.registerLazySingleton<UpdateEmployeeProfile>(
       () => UpdateEmployeeProfile(getIt<CoreRepository>()),
+    );
+  }
+
+  // Fleet Bounded Context
+  if (!getIt.isRegistered<AppointmentApi>()) {
+    getIt.registerLazySingleton<AppointmentApi>(
+      () => AppointmentApi(getIt<ApiClient>()),
+    );
+  }
+
+  if (!getIt.isRegistered<CustomerVehicleApi>()) {
+    getIt.registerLazySingleton<CustomerVehicleApi>(
+      () => CustomerVehicleApi(getIt<ApiClient>()),
+    );
+  }
+
+  if (!getIt.isRegistered<RegistrationApi>()) {
+    getIt.registerLazySingleton<RegistrationApi>(
+      () => RegistrationApi(getIt<ApiClient>()),
+    );
+  }
+
+  if (!getIt.isRegistered<FleetRepository>()) {
+    getIt.registerLazySingleton<FleetRepository>(
+      () => FleetRepositoryImpl(
+        appointmentApi: getIt<AppointmentApi>(),
+        customerVehicleApi: getIt<CustomerVehicleApi>(),
+        registrationApi: getIt<RegistrationApi>(),
+      ),
+    );
+  }
+
+  if (!getIt.isRegistered<CreateAppointment>()) {
+    getIt.registerLazySingleton<CreateAppointment>(
+      () => CreateAppointment(getIt<FleetRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<GetAppointments>()) {
+    getIt.registerLazySingleton<GetAppointments>(
+      () => GetAppointments(getIt<FleetRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<GetAppointmentById>()) {
+    getIt.registerLazySingleton<GetAppointmentById>(
+      () => GetAppointmentById(getIt<FleetRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<UpdateAppointment>()) {
+    getIt.registerLazySingleton<UpdateAppointment>(
+      () => UpdateAppointment(getIt<FleetRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageAppointmentLifecycle>()) {
+    getIt.registerLazySingleton<ManageAppointmentLifecycle>(
+      () => ManageAppointmentLifecycle(getIt<FleetRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<CreateCustomer>()) {
+    getIt.registerLazySingleton<CreateCustomer>(
+      () => CreateCustomer(getIt<FleetRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<GetCustomers>()) {
+    getIt.registerLazySingleton<GetCustomers>(
+      () => GetCustomers(getIt<FleetRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageCustomer>()) {
+    getIt.registerLazySingleton<ManageCustomer>(
+      () => ManageCustomer(getIt<FleetRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<CreateVehicle>()) {
+    getIt.registerLazySingleton<CreateVehicle>(
+      () => CreateVehicle(getIt<FleetRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<GetVehicles>()) {
+    getIt.registerLazySingleton<GetVehicles>(
+      () => GetVehicles(getIt<FleetRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageVehicle>()) {
+    getIt.registerLazySingleton<ManageVehicle>(
+      () => ManageVehicle(getIt<FleetRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageCustomerRegistrations>()) {
+    getIt.registerLazySingleton<ManageCustomerRegistrations>(
+      () => ManageCustomerRegistrations(getIt<FleetRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageEmployeeRegistrations>()) {
+    getIt.registerLazySingleton<ManageEmployeeRegistrations>(
+      () => ManageEmployeeRegistrations(getIt<FleetRepository>()),
     );
   }
 }
