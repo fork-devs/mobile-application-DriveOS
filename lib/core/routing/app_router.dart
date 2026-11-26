@@ -10,6 +10,8 @@ import 'package:mobile_application_driveos/features/auth/presentation/views/forg
 import 'package:mobile_application_driveos/features/auth/presentation/views/login_page.dart';
 import 'package:mobile_application_driveos/features/auth/presentation/views/register_page.dart';
 import 'package:mobile_application_driveos/features/core/presentation/views/branch_selection_page.dart';
+import 'package:mobile_application_driveos/features/customer/presentation/views/customer_home_page.dart';
+import 'package:mobile_application_driveos/features/main/presentation/main_page.dart';
 
 /// Builds the declarative [GoRouter] configuration for DriveOS Mobile.
 class AppRouter {
@@ -46,46 +48,13 @@ class AppRouter {
         ),
         GoRoute(
           path: '/main',
-          builder: (context, state) => const _PlaceholderScreen(
-            title: 'DriveOS Workshop',
-            subtitle: 'Workshop shell pending implementation.',
-          ),
+          builder: (context, state) => const MainPage(),
         ),
         GoRoute(
           path: '/customer',
-          builder: (context, state) => const _PlaceholderScreen(
-            title: 'DriveOS Customer',
-            subtitle: 'Customer portal pending implementation.',
-          ),
+          builder: (context, state) => const CustomerHomePage(),
         ),
       ],
-    );
-  }
-}
-
-class _PlaceholderScreen extends StatelessWidget {
-  final String title;
-  final String subtitle;
-
-  const _PlaceholderScreen({
-    required this.title,
-    required this.subtitle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Text(
-            subtitle,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        ),
-      ),
     );
   }
 }
