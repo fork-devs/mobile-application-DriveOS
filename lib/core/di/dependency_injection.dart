@@ -18,6 +18,7 @@ import 'package:mobile_application_driveos/features/core/infrastructure/remote/p
 import 'package:mobile_application_driveos/features/core/infrastructure/remote/workshop_api.dart';
 import 'package:mobile_application_driveos/features/core/infrastructure/repositories/core_repository_impl.dart';
 import 'package:mobile_application_driveos/features/core/presentation/controllers/branch_selection_view_model.dart';
+import 'package:mobile_application_driveos/features/customer/presentation/controllers/customer_home_view_model.dart';
 import 'package:mobile_application_driveos/features/fleet/application/fleet_application.dart';
 import 'package:mobile_application_driveos/features/fleet/domain/fleet_domain.dart';
 import 'package:mobile_application_driveos/features/fleet/infrastructure/remote/appointment_api.dart';
@@ -650,6 +651,17 @@ void setupDependencies() {
         updateBranch: getIt<UpdateBranch>(),
         uploadBranchBanner: getIt<UploadBranchBanner>(),
         selectActiveBranch: getIt<SelectActiveBranch>(),
+        sessionStorage: getIt<SessionStorage>(),
+      ),
+    );
+  }
+  if (!getIt.isRegistered<CustomerHomeViewModel>()) {
+    getIt.registerFactory<CustomerHomeViewModel>(
+      () => CustomerHomeViewModel(
+        manageWorkOrders: getIt<ManageWorkOrders>(),
+        manageQuotes: getIt<ManageQuotes>(),
+        getAnalytics: getIt<GetAnalytics>(),
+        getVehicles: getIt<GetVehicles>(),
         sessionStorage: getIt<SessionStorage>(),
       ),
     );
