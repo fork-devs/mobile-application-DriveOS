@@ -313,6 +313,49 @@ class ApiConstants {
   static String voucherPaymentById(String voucherId, String paymentId) =>
       '/api/v1/vouchers/$voucherId/payments/$paymentId';
 
+  // IoT & Telemetry (erp-iot-ingestion, erp-iot-processor, erp-iot-simulator)
+  static const String obd2Devices = '/api/v1/obd2-devices';
+  static const String obd2Registrations = '/api/v1/obd2-device-registrations';
+  static const String simulatorStart = '/api/v1/simulator/start';
+  static const String simulatorStop = '/api/v1/simulator/stop';
+  static const String simulatorStatus = '/api/v1/simulator/status';
+
+  /// Returns the OBD2 device endpoint for [deviceId].
+  static String obd2DeviceById(String deviceId) =>
+      '/api/v1/obd2-devices/$deviceId';
+
+  /// Returns the OBD2 registration endpoint for [registrationId].
+  static String obd2RegistrationById(String registrationId) =>
+      '/api/v1/obd2-device-registrations/$registrationId';
+
+  /// Returns the vehicle diagnostics endpoint for [vehicleId].
+  static String vehicleDiagnostics(String vehicleId) =>
+      '/api/v1/iot/diagnostics/$vehicleId';
+
+  /// Returns the telemetry snapshots endpoint for [vehicleId].
+  static String vehicleTelemetrySnapshots(String vehicleId) =>
+      '/api/v1/vehicles/$vehicleId/telemetry-snapshots';
+
+  /// Returns the DTC alerts endpoint for [vehicleId].
+  static String vehicleDtcAlerts(String vehicleId) =>
+      '/api/v1/vehicles/$vehicleId/dtc-alerts';
+
+  /// Returns the latest telemetry snapshot endpoint for [deviceId].
+  static String deviceLatestSnapshot(String deviceId) =>
+      '/api/v1/obd2-devices/$deviceId/telemetry-snapshots/latest';
+
+  /// Returns the telemetry snapshots endpoint for [deviceId].
+  static String deviceTelemetrySnapshots(String deviceId) =>
+      '/api/v1/obd2-devices/$deviceId/telemetry-snapshots';
+
+  /// Returns the telemetry snapshots endpoint for [registrationId].
+  static String registrationTelemetrySnapshots(String registrationId) =>
+      '/api/v1/obd2-device-registrations/$registrationId/telemetry-snapshots';
+
+  /// Returns the DTC alerts endpoint for [registrationId].
+  static String registrationDtcAlerts(String registrationId) =>
+      '/api/v1/obd2-device-registrations/$registrationId/dtc-alerts';
+
   // Analytics (erp-analytics-service)
   static String branchAnalyticsSummary(String branchId) =>
       '/api/v1/analytics/branches/$branchId/summary';
