@@ -6,9 +6,12 @@ import 'package:mobile_application_driveos/core/storage/session_storage.dart';
 import 'package:mobile_application_driveos/core/theme/app_theme.dart';
 import 'package:mobile_application_driveos/core/widgets/driveos_empty_state.dart';
 import 'package:mobile_application_driveos/core/widgets/driveos_floating_nav_bar.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_loading_helpers.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_page_header.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_pull_to_refresh.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_skeleton.dart';
 import 'package:mobile_application_driveos/core/widgets/driveos_tactile_card.dart';
 import 'package:mobile_application_driveos/core/widgets/driveos_toast.dart';
-import 'package:mobile_application_driveos/core/widgets/driveos_top_progress_bar.dart';
 import 'package:mobile_application_driveos/features/auth/application/auth_application.dart';
 import 'package:mobile_application_driveos/features/billing/domain/billing_domain.dart';
 import 'package:mobile_application_driveos/features/customer/presentation/controllers/customer_home_view_model.dart';
@@ -67,57 +70,61 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
         return Scaffold(
           extendBody: true,
           backgroundColor: DriveOSColors.warmNeutral,
-          appBar: AppBar(
-            title: Text(loc.translate('customer_portal_title')),
-            actions: [
-              IconButton(
-                tooltip: loc.translate('sign_out'),
-                icon: const Icon(Icons.logout_rounded),
-                onPressed: _signOut,
-              ),
-            ],
-          ),
-          body: Column(
-            children: [
-              DriveOSTopProgressBar(isLoading: vm?.isLoading ?? false),
-              Expanded(
-                child: IndexedStack(
-                  index: _selectedTab,
-                  children: [
-                    _SummaryTab(
-                      vm: vm,
-                      onSelectTab: (tab) => setState(() => _selectedTab = tab),
-                    ),
-                    _VehiclesTab(vehicles: vm?.vehicles ?? const []),
-                    _OrdersTab(orders: vm?.workOrders ?? const []),
-                    _QuotesTab(
-                      quotes: vm?.quotes ?? const [],
-                      busyQuoteId: vm?.busyQuoteId,
-                      onApprove: (id) async {
-                        final ok = await vm?.approveQuote(id) ?? false;
-                        if (ok && context.mounted) {
-                          DriveOSToast.show(
-                            context,
-                            loc.translate('approve_quote'),
-                            type: DriveOSToastType.success,
-                          );
-                        }
-                      },
-                      onReject: (id) async {
-                        final ok = await vm?.rejectQuote(id) ?? false;
-                        if (ok && context.mounted) {
-                          DriveOSToast.show(
-                            context,
-                            loc.translate('reject_quote'),
-                            type: DriveOSToastType.info,
-                          );
-                        }
-                      },
-                    ),
-                  ],
+          body: DriveOSCollapsibleHeaderBody(
+            header: DriveOSPageHeader(
+              title: loc.translate('customer_portal_title'),
+              actions: [
+                IconButton(
+                  tooltip: loc.translate('sign_out'),
+                  icon: const Icon(Icons.logout_rounded, color: Colors.white),
+                  onPressed: _signOut,
                 ),
-              ),
-            ],
+              ],
+            ),
+            body: DriveOSContentTransition(
+              child: (vm?.isLoading ?? false) &&
+                      (vm?.workOrders.isEmpty ?? true)
+                  ? const DriveOSSkeletonDetail(
+                      key: ValueKey('customer_skeleton'),
+                    )
+                  : IndexedStack(
+                      key: const ValueKey('customer_tabs'),
+                      index: _selectedTab,
+                      children: [
+                        _SummaryTab(
+                          vm: vm,
+                          onSelectTab: (tab) =>
+                              setState(() => _selectedTab = tab),
+                        ),
+                        _VehiclesTab(vehicles: vm?.vehicles ?? const []),
+                        _OrdersTab(orders: vm?.workOrders ?? const []),
+                        _QuotesTab(
+                          quotes: vm?.quotes ?? const [],
+                          busyQuoteId: vm?.busyQuoteId,
+                          onApprove: (id) async {
+                            final ok = await vm?.approveQuote(id) ?? false;
+                            if (ok && context.mounted) {
+                              DriveOSToast.show(
+                                context,
+                                loc.translate('approve_quote'),
+                                type: DriveOSToastType.success,
+                              );
+                            }
+                          },
+                          onReject: (id) async {
+                            final ok = await vm?.rejectQuote(id) ?? false;
+                            if (ok && context.mounted) {
+                              DriveOSToast.show(
+                                context,
+                                loc.translate('reject_quote'),
+                                type: DriveOSToastType.info,
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+            ),
           ),
           bottomNavigationBar: DriveOSFloatingNavBar(
             key: const Key('customer_navigation_bar'),
@@ -172,9 +179,11 @@ class _SummaryTab extends StatelessWidget {
         summary?.activeWorkOrdersCount ?? vm?.workOrders.length ?? 0;
     final quoteCount = summary?.pendingQuotesCount ?? vm?.quotes.length ?? 0;
 
-    return RefreshIndicator(
+    return DriveOSPullToRefresh(
+      skeleton: const DriveOSSkeletonDetail(),
       onRefresh: () => vm?.load() ?? Future.value(),
       child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
         children: [
           Row(

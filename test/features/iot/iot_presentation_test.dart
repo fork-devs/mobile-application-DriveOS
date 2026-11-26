@@ -93,7 +93,7 @@ void main() {
         .pumpWidget(_wrapWithApp(TelemetryDashboardPage(viewModel: vm)));
     await tester.pumpAndSettle();
 
-    expect(find.text('1'), findsNWidgets(2));
+    expect(find.text('1'), findsNWidgets(3));
     expect(find.text('P0300'), findsOneWidget);
     expect(
       find.text('Random/Multiple Cylinder Misfire Detected'),

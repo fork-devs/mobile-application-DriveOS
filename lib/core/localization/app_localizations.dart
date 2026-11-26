@@ -200,6 +200,8 @@ class AppLocalizations {
       'active_links_count': 'Active Links',
       'register_obd2': 'Register OBD2',
       'no_dtc_alerts': 'No active DTC alerts',
+      'pull_to_refresh_idle': 'Pull to refresh',
+      'pull_to_refresh_armed': 'Release to refresh',
     },
     'es': {
       'app_title': 'DriveOS Workshop',
@@ -356,6 +358,8 @@ class AppLocalizations {
       'active_links_count': 'Enlaces Activos',
       'register_obd2': 'Registrar OBD2',
       'no_dtc_alerts': 'Sin alertas DTC activas',
+      'pull_to_refresh_idle': 'Desliza para actualizar',
+      'pull_to_refresh_armed': 'Suelta para actualizar',
     },
   };
 

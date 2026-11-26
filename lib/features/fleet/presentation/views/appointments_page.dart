@@ -4,7 +4,11 @@ import 'package:mobile_application_driveos/core/di/dependency_injection.dart';
 import 'package:mobile_application_driveos/core/localization/app_localizations.dart';
 import 'package:mobile_application_driveos/core/theme/app_theme.dart';
 import 'package:mobile_application_driveos/core/widgets/driveos_empty_state.dart';
-import 'package:mobile_application_driveos/core/widgets/driveos_top_progress_bar.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_kanban_tab_bar.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_loading_helpers.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_page_header.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_pull_to_refresh.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_skeleton.dart';
 import 'package:mobile_application_driveos/features/auth/presentation/widgets/auth_scaffold.dart';
 import 'package:mobile_application_driveos/features/fleet/domain/fleet_domain.dart';
 import 'package:mobile_application_driveos/features/fleet/presentation/controllers/appointments_view_model.dart';
@@ -137,75 +141,101 @@ class _AppointmentsPageState extends State<AppointmentsPage>
 
         return Scaffold(
           backgroundColor: DriveOSColors.warmNeutral,
-          appBar: AppBar(
-            title: Text(loc.translate('appointments_title')),
-            bottom: TabBar(
-              controller: _tabController,
-              isScrollable: true,
-              tabs: [
-                Tab(text: loc.translate('all_tab')),
-                Tab(text: loc.translate('scheduled_status')),
-                Tab(text: loc.translate('confirmed_status')),
-                Tab(text: loc.translate('completed_status')),
-              ],
-            ),
-          ),
           floatingActionButton: FloatingActionButton.extended(
             key: const Key('fab_new_appointment'),
             onPressed: _showCreateAppointmentDialog,
             icon: const Icon(Icons.add_rounded),
             label: Text(loc.translate('new_appointment')),
           ),
-          body: Column(
-            children: [
-              DriveOSTopProgressBar(isLoading: vm.isLoading),
-              if (vm.errorMessage != null)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                  child: AuthErrorBanner(message: vm.errorMessage!),
+          body: DriveOSCollapsibleHeaderBody(
+            header: DriveOSPageHeader(
+              title: loc.translate('appointments_title'),
+            ),
+            body: Column(
+              children: [
+                DriveOSKanbanTabBar(
+                  controller: _tabController,
+                  tabs: [
+                    DriveOSKanbanTabItem(
+                      label: loc.translate('all_tab'),
+                      count: vm.appointments.length,
+                    ),
+                    DriveOSKanbanTabItem(
+                      label: loc.translate('scheduled_status'),
+                    ),
+                    DriveOSKanbanTabItem(
+                      label: loc.translate('confirmed_status'),
+                    ),
+                    DriveOSKanbanTabItem(
+                      label: loc.translate('completed_status'),
+                    ),
+                  ],
                 ),
-              Expanded(
-                child: vm.appointments.isEmpty && !vm.isLoading
-                    ? Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const DriveOSEmptyStateIcon(
-                              icon: Icons.calendar_month_outlined,
-                              color: DriveOSColors.secondaryTeal,
-                            ),
-                            const SizedBox(height: 14),
-                            Text(
-                              loc.translate('no_appointments'),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: DriveOSColors.graphiteText,
+                if (vm.errorMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                    child: AuthErrorBanner(message: vm.errorMessage!),
+                  ),
+                Expanded(
+                  child: DriveOSContentTransition(
+                    child: vm.isLoading && vm.appointments.isEmpty
+                        ? const DriveOSSkeletonCardList(
+                            key: ValueKey('appointments_skeleton'),
+                          )
+                        : vm.appointments.isEmpty
+                            ? Center(
+                                key: const ValueKey('appointments_empty'),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const DriveOSEmptyStateIcon(
+                                      icon: Icons.calendar_month_outlined,
+                                      color: DriveOSColors.secondaryTeal,
+                                    ),
+                                    const SizedBox(height: 14),
+                                    Text(
+                                      loc.translate('no_appointments'),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: DriveOSColors.graphiteText,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : DriveOSPullToRefresh(
+                                key: const ValueKey('appointments_list'),
+                                onRefresh: () =>
+                                    vm.loadAppointments(widget.branchId),
+                                child: ListView.separated(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    16,
+                                    16,
+                                    110,
+                                  ),
+                                  itemCount: vm.appointments.length,
+                                  separatorBuilder: (_, _) =>
+                                      const SizedBox(height: 12),
+                                  itemBuilder: (context, index) {
+                                    final appt = vm.appointments[index];
+                                    return _AppointmentCard(
+                                      appointment: appt,
+                                      onConfirm: () => vm.confirm(appt.id),
+                                      onCheckIn: () => vm.checkIn(appt.id),
+                                      onComplete: () => vm.complete(appt.id),
+                                      onCancel: () =>
+                                          vm.cancelAppointment(appt.id),
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: () => vm.loadAppointments(widget.branchId),
-                        child: ListView.separated(
-                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 110),
-                          itemCount: vm.appointments.length,
-                          separatorBuilder: (_, _) =>
-                              const SizedBox(height: 12),
-                          itemBuilder: (context, index) {
-                            final appt = vm.appointments[index];
-                            return _AppointmentCard(
-                              appointment: appt,
-                              onConfirm: () => vm.confirm(appt.id),
-                              onCheckIn: () => vm.checkIn(appt.id),
-                              onComplete: () => vm.complete(appt.id),
-                              onCancel: () => vm.cancelAppointment(appt.id),
-                            );
-                          },
-                        ),
-                      ),
-              ),
-            ],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

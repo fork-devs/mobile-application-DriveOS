@@ -5,8 +5,12 @@ import 'package:mobile_application_driveos/core/localization/app_localizations.d
 import 'package:mobile_application_driveos/core/storage/session_storage.dart';
 import 'package:mobile_application_driveos/core/theme/app_theme.dart';
 import 'package:mobile_application_driveos/core/widgets/driveos_empty_state.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_kanban_tab_bar.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_loading_helpers.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_page_header.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_pull_to_refresh.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_skeleton.dart';
 import 'package:mobile_application_driveos/core/widgets/driveos_tactile_card.dart';
-import 'package:mobile_application_driveos/core/widgets/driveos_top_progress_bar.dart';
 import 'package:mobile_application_driveos/features/auth/presentation/widgets/auth_scaffold.dart';
 import 'package:mobile_application_driveos/features/operations/domain/operations_domain.dart';
 import 'package:mobile_application_driveos/features/operations/presentation/controllers/work_orders_view_model.dart';
@@ -151,19 +155,6 @@ class _WorkOrdersPageState extends State<WorkOrdersPage>
 
         return Scaffold(
           backgroundColor: DriveOSColors.warmNeutral,
-          appBar: AppBar(
-            title: Text(loc.translate('work_orders_title')),
-            bottom: TabBar(
-              controller: _tabController,
-              isScrollable: true,
-              tabs: [
-                Tab(text: loc.translate('all_tab')),
-                Tab(text: loc.translate('open_status')),
-                Tab(text: loc.translate('in_progress_status')),
-                Tab(text: loc.translate('completed_status')),
-              ],
-            ),
-          ),
           floatingActionButton: _canCreateWorkOrder
               ? FloatingActionButton.extended(
                   key: const Key('fab_new_work_order'),
@@ -172,62 +163,98 @@ class _WorkOrdersPageState extends State<WorkOrdersPage>
                   label: Text(loc.translate('new_work_order')),
                 )
               : null,
-          body: Column(
-            children: [
-              DriveOSTopProgressBar(isLoading: vm.isLoading),
-              if (vm.errorMessage != null)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                  child: AuthErrorBanner(message: vm.errorMessage!),
+          body: DriveOSCollapsibleHeaderBody(
+            header: DriveOSPageHeader(
+              title: loc.translate('work_orders_title'),
+              subtitle: vm.activeBranchName,
+            ),
+            body: Column(
+              children: [
+                DriveOSKanbanTabBar(
+                  controller: _tabController,
+                  tabs: [
+                    DriveOSKanbanTabItem(
+                      label: loc.translate('all_tab'),
+                      count: vm.orders.length,
+                    ),
+                    DriveOSKanbanTabItem(label: loc.translate('open_status')),
+                    DriveOSKanbanTabItem(
+                      label: loc.translate('in_progress_status'),
+                    ),
+                    DriveOSKanbanTabItem(
+                      label: loc.translate('completed_status'),
+                    ),
+                  ],
                 ),
-              Expanded(
-                child: vm.orders.isEmpty && !vm.isLoading
-                    ? Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const DriveOSEmptyStateIcon(
-                              icon: Icons.build_outlined,
-                              color: DriveOSColors.primaryBlue,
-                            ),
-                            const SizedBox(height: 14),
-                            Text(
-                              loc.translate('no_work_orders'),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: DriveOSColors.graphiteText,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: vm.loadOrders,
-                        child: ListView.separated(
-                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 110),
-                          itemCount: vm.orders.length,
-                          separatorBuilder: (_, _) =>
-                              const SizedBox(height: 12),
-                          itemBuilder: (context, index) {
-                            final order = vm.orders[index];
-                            return _WorkOrderCard(
-                              order: order,
-                              onTap: () async {
-                                await Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) => WorkOrderDetailPage(
-                                      workOrderId: order.orderId,
+                if (vm.errorMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                    child: AuthErrorBanner(message: vm.errorMessage!),
+                  ),
+                Expanded(
+                  child: DriveOSContentTransition(
+                    child: vm.isLoading && vm.orders.isEmpty
+                        ? const DriveOSSkeletonCardList(
+                            key: ValueKey('orders_skeleton'),
+                          )
+                        : vm.orders.isEmpty
+                            ? Center(
+                                key: const ValueKey('orders_empty'),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const DriveOSEmptyStateIcon(
+                                      icon: Icons.build_outlined,
+                                      color: DriveOSColors.primaryBlue,
                                     ),
+                                    const SizedBox(height: 14),
+                                    Text(
+                                      loc.translate('no_work_orders'),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: DriveOSColors.graphiteText,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : DriveOSPullToRefresh(
+                                key: const ValueKey('orders_list'),
+                                onRefresh: vm.loadOrders,
+                                child: ListView.separated(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    16,
+                                    16,
+                                    110,
                                   ),
-                                );
-                                vm.loadOrders();
-                              },
-                            );
-                          },
-                        ),
-                      ),
-              ),
-            ],
+                                  itemCount: vm.orders.length,
+                                  separatorBuilder: (_, _) =>
+                                      const SizedBox(height: 12),
+                                  itemBuilder: (context, index) {
+                                    final order = vm.orders[index];
+                                    return _WorkOrderCard(
+                                      order: order,
+                                      onTap: () async {
+                                        await Navigator.of(context).push(
+                                          MaterialPageRoute<void>(
+                                            builder: (_) => WorkOrderDetailPage(
+                                              workOrderId: order.orderId,
+                                            ),
+                                          ),
+                                        );
+                                        vm.loadOrders();
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
