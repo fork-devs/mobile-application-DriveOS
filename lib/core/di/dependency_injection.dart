@@ -32,6 +32,10 @@ import 'package:mobile_application_driveos/features/iot/application/iot_applicat
 import 'package:mobile_application_driveos/features/iot/domain/iot_domain.dart';
 import 'package:mobile_application_driveos/features/iot/infrastructure/remote/iot_api.dart';
 import 'package:mobile_application_driveos/features/iot/infrastructure/repositories/iot_repository_impl.dart';
+import 'package:mobile_application_driveos/features/analytics/application/analytics_application.dart';
+import 'package:mobile_application_driveos/features/analytics/domain/analytics_domain.dart';
+import 'package:mobile_application_driveos/features/analytics/infrastructure/remote/analytics_api.dart';
+import 'package:mobile_application_driveos/features/analytics/infrastructure/repositories/analytics_repository_impl.dart';
 import 'package:mobile_application_driveos/features/operations/application/operations_application.dart';
 import 'package:mobile_application_driveos/features/operations/domain/operations_domain.dart';
 import 'package:mobile_application_driveos/features/operations/infrastructure/remote/service_api.dart';
@@ -559,6 +563,25 @@ void setupDependencies() {
   if (!getIt.isRegistered<ManageTelemetryAndDiagnostics>()) {
     getIt.registerLazySingleton<ManageTelemetryAndDiagnostics>(
       () => ManageTelemetryAndDiagnostics(getIt<IotRepository>()),
+    );
+  }
+
+  // Analytics Bounded Context
+  if (!getIt.isRegistered<AnalyticsApi>()) {
+    getIt.registerLazySingleton<AnalyticsApi>(
+      () => AnalyticsApi(getIt<ApiClient>()),
+    );
+  }
+
+  if (!getIt.isRegistered<AnalyticsRepository>()) {
+    getIt.registerLazySingleton<AnalyticsRepository>(
+      () => AnalyticsRepositoryImpl(analyticsApi: getIt<AnalyticsApi>()),
+    );
+  }
+
+  if (!getIt.isRegistered<GetAnalytics>()) {
+    getIt.registerLazySingleton<GetAnalytics>(
+      () => GetAnalytics(getIt<AnalyticsRepository>()),
     );
   }
 }
