@@ -11,6 +11,7 @@ import 'package:mobile_application_driveos/features/analytics/presentation/views
 import 'package:mobile_application_driveos/features/analytics/presentation/views/employee_dashboard_page.dart';
 import 'package:mobile_application_driveos/features/auth/application/auth_application.dart';
 import 'package:mobile_application_driveos/features/customer/presentation/views/customer_home_page.dart';
+import 'package:mobile_application_driveos/features/fleet/presentation/views/appointments_page.dart';
 import 'package:mobile_application_driveos/features/operations/presentation/views/work_orders_page.dart';
 
 class _NavDestinationSpec {
@@ -159,12 +160,7 @@ class _MainPageState extends State<MainPage>
           labelKey: 'appointments_tab',
           page: override != null && override.length > 2
               ? override[2]
-              : _ShellTabScaffold(
-                  titleKey: 'appointments_tab',
-                  icon: Icons.calendar_month_outlined,
-                  onSwitchBranch: () => context.go('/branches'),
-                  onSignOut: _signOut,
-                ),
+              : const AppointmentsPage(),
         ),
         _NavDestinationSpec(
           key: const Key('nav_inventory'),
