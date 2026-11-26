@@ -282,7 +282,36 @@ class ApiConstants {
 
   // Billing (erp-billing-service)
   static const String quotes = '/api/v1/quotes';
+  static const String quotesMe = '/api/v1/quotes/me';
+  static const String checkouts = '/api/v1/checkouts';
+  static const String checkoutsMercadoPago = '/api/v1/checkouts/mercadopago';
+  static const String paymentSessions = '/api/v1/payments/sessions';
   static const String vouchers = '/api/v1/vouchers';
+
+  /// Returns the quote endpoint for [quoteId].
+  static String quoteById(String quoteId) => '/api/v1/quotes/$quoteId';
+
+  /// Returns the quote sync endpoint for [quoteId].
+  static String quoteSync(String quoteId) => '/api/v1/quotes/$quoteId/sync';
+
+  /// Returns the quote approval endpoint for [quoteId].
+  static String quoteApprove(String quoteId) =>
+      '/api/v1/quotes/$quoteId/approvals';
+
+  /// Returns the quote cancellation endpoint for [quoteId].
+  static String quoteCancel(String quoteId) =>
+      '/api/v1/quotes/$quoteId/cancellations';
+
+  /// Returns the voucher endpoint for [voucherId].
+  static String voucherById(String voucherId) => '/api/v1/vouchers/$voucherId';
+
+  /// Returns the voucher payments endpoint for [voucherId].
+  static String voucherPayments(String voucherId) =>
+      '/api/v1/vouchers/$voucherId/payments';
+
+  /// Returns the voucher payment endpoint for [paymentId] on [voucherId].
+  static String voucherPaymentById(String voucherId, String paymentId) =>
+      '/api/v1/vouchers/$voucherId/payments/$paymentId';
 
   // Analytics (erp-analytics-service)
   static String branchAnalyticsSummary(String branchId) =>
