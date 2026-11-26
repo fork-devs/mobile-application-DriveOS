@@ -23,6 +23,7 @@ import 'package:mobile_application_driveos/features/analytics/presentation/contr
 import 'package:mobile_application_driveos/features/analytics/presentation/controllers/employee_dashboard_view_model.dart';
 import 'package:mobile_application_driveos/features/operations/presentation/controllers/work_order_detail_view_model.dart';
 import 'package:mobile_application_driveos/features/operations/presentation/controllers/work_orders_view_model.dart';
+import 'package:mobile_application_driveos/features/fleet/presentation/controllers/appointments_view_model.dart';
 import 'package:mobile_application_driveos/features/fleet/application/fleet_application.dart';
 import 'package:mobile_application_driveos/features/fleet/domain/fleet_domain.dart';
 import 'package:mobile_application_driveos/features/fleet/infrastructure/remote/appointment_api.dart';
@@ -703,6 +704,17 @@ void setupDependencies() {
         manageWorkOrders: getIt<ManageWorkOrders>(),
         manageTasks: getIt<ManageWorkOrderTasks>(),
         manageEvidences: getIt<ManageEvidencesAndSupplements>(),
+      ),
+    );
+  }
+  if (!getIt.isRegistered<AppointmentsViewModel>()) {
+    getIt.registerFactory<AppointmentsViewModel>(
+      () => AppointmentsViewModel(
+        getAppointments: getIt<GetAppointments>(),
+        createAppointment: getIt<CreateAppointment>(),
+        lifecycle: getIt<ManageAppointmentLifecycle>(),
+        sessionStorage: getIt<SessionStorage>(),
+        eventBus: getIt<DomainEventBus>(),
       ),
     );
   }
