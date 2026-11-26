@@ -374,4 +374,17 @@ class ApiConstants {
   /// Returns the branch financial series endpoint for [branchId].
   static String branchAnalyticsFinancial(String branchId) =>
       '/api/v1/analytics/branches/$branchId/financial';
+
+  // Shared Integration Hub (erp-integration-hub)
+  static const String identityLookup = '/api/v1/identity-validations/lookup';
+  static const String mediaUpload = '/api/v1/media/upload';
+  static const String integrationHealth = '/health';
+
+  /// Returns the RUC validation endpoint for [ruc].
+  static String validateRuc(String ruc) =>
+      '/api/v1/identity-validations/ruc/$ruc';
+
+  /// Returns the vehicle plate validation endpoint for [plate].
+  static String validatePlate(String plate) =>
+      '/api/v1/identity-validations/placa/$plate';
 }

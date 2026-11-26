@@ -36,6 +36,10 @@ import 'package:mobile_application_driveos/features/analytics/application/analyt
 import 'package:mobile_application_driveos/features/analytics/domain/analytics_domain.dart';
 import 'package:mobile_application_driveos/features/analytics/infrastructure/remote/analytics_api.dart';
 import 'package:mobile_application_driveos/features/analytics/infrastructure/repositories/analytics_repository_impl.dart';
+import 'package:mobile_application_driveos/features/shared/application/shared_application.dart';
+import 'package:mobile_application_driveos/features/shared/domain/shared_domain.dart';
+import 'package:mobile_application_driveos/features/shared/infrastructure/remote/shared_api.dart';
+import 'package:mobile_application_driveos/features/shared/infrastructure/repositories/shared_repository_impl.dart';
 import 'package:mobile_application_driveos/features/operations/application/operations_application.dart';
 import 'package:mobile_application_driveos/features/operations/domain/operations_domain.dart';
 import 'package:mobile_application_driveos/features/operations/infrastructure/remote/service_api.dart';
@@ -582,6 +586,31 @@ void setupDependencies() {
   if (!getIt.isRegistered<GetAnalytics>()) {
     getIt.registerLazySingleton<GetAnalytics>(
       () => GetAnalytics(getIt<AnalyticsRepository>()),
+    );
+  }
+
+  // Shared Integration Hub Generic Subdomain
+  if (!getIt.isRegistered<SharedApi>()) {
+    getIt.registerLazySingleton<SharedApi>(
+      () => SharedApi(getIt<ApiClient>()),
+    );
+  }
+
+  if (!getIt.isRegistered<SharedRepository>()) {
+    getIt.registerLazySingleton<SharedRepository>(
+      () => SharedRepositoryImpl(sharedApi: getIt<SharedApi>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageIdentityValidations>()) {
+    getIt.registerLazySingleton<ManageIdentityValidations>(
+      () => ManageIdentityValidations(getIt<SharedRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageMediaAndHealth>()) {
+    getIt.registerLazySingleton<ManageMediaAndHealth>(
+      () => ManageMediaAndHealth(getIt<SharedRepository>()),
     );
   }
 }
