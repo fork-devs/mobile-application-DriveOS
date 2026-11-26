@@ -3,7 +3,11 @@ import 'package:mobile_application_driveos/core/di/dependency_injection.dart';
 import 'package:mobile_application_driveos/core/localization/app_localizations.dart';
 import 'package:mobile_application_driveos/core/theme/app_theme.dart';
 import 'package:mobile_application_driveos/core/widgets/driveos_empty_state.dart';
-import 'package:mobile_application_driveos/core/widgets/driveos_top_progress_bar.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_kanban_tab_bar.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_loading_helpers.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_page_header.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_pull_to_refresh.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_skeleton.dart';
 import 'package:mobile_application_driveos/features/auth/presentation/widgets/auth_scaffold.dart';
 import 'package:mobile_application_driveos/features/iot/domain/iot_domain.dart';
 import 'package:mobile_application_driveos/features/iot/presentation/controllers/telemetry_view_model.dart';
@@ -113,88 +117,111 @@ class _TelemetryDashboardPageState extends State<TelemetryDashboardPage>
 
         return Scaffold(
           backgroundColor: DriveOSColors.warmNeutral,
-          appBar: AppBar(
-            title: Text(loc.translate('telemetry_title')),
-            bottom: TabBar(
-              controller: _tabController,
-              isScrollable: true,
-              tabs: [
-                Tab(text: loc.translate('all_tab')),
-                Tab(text: loc.translate('critical_severity')),
-                Tab(text: loc.translate('warning_severity')),
-              ],
-            ),
-          ),
           floatingActionButton: FloatingActionButton.extended(
             key: const Key('fab_register_obd2'),
             onPressed: _showRegisterDeviceDialog,
             icon: const Icon(Icons.bluetooth_searching_rounded),
             label: Text(loc.translate('register_obd2')),
           ),
-          body: Column(
-            children: [
-              DriveOSTopProgressBar(isLoading: vm.isLoading),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _TelemetryStatTile(
-                        label: loc.translate('obd2_devices_count'),
-                        value: '${vm.devices.length}',
-                        color: DriveOSColors.primaryBlue,
-                      ),
+          body: DriveOSCollapsibleHeaderBody(
+            header: DriveOSPageHeader(
+              title: loc.translate('telemetry_title'),
+            ),
+            body: Column(
+              children: [
+                DriveOSKanbanTabBar(
+                  controller: _tabController,
+                  tabs: [
+                    DriveOSKanbanTabItem(
+                      label: loc.translate('all_tab'),
+                      count: vm.dtcAlerts.length,
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _TelemetryStatTile(
-                        label: loc.translate('active_links_count'),
-                        value: '${vm.registrations.length}',
-                        color: DriveOSColors.secondaryTeal,
-                      ),
+                    DriveOSKanbanTabItem(
+                      label: loc.translate('critical_severity'),
+                    ),
+                    DriveOSKanbanTabItem(
+                      label: loc.translate('warning_severity'),
                     ),
                   ],
                 ),
-              ),
-              if (vm.errorMessage != null)
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-                  child: AuthErrorBanner(message: vm.errorMessage!),
-                ),
-              Expanded(
-                child: vm.dtcAlerts.isEmpty && !vm.isLoading
-                    ? Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const DriveOSEmptyStateIcon(
-                              icon: Icons.sensors_outlined,
-                              color: DriveOSColors.secondaryTeal,
-                            ),
-                            const SizedBox(height: 14),
-                            Text(
-                              loc.translate('no_dtc_alerts'),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: DriveOSColors.graphiteText,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: () => vm.loadTelemetry(widget.branchId),
-                        child: ListView.separated(
-                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
-                          itemCount: vm.dtcAlerts.length,
-                          separatorBuilder: (_, _) =>
-                              const SizedBox(height: 12),
-                          itemBuilder: (context, index) =>
-                              _DtcAlertCard(alert: vm.dtcAlerts[index]),
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _TelemetryStatTile(
+                          label: loc.translate('obd2_devices_count'),
+                          value: '${vm.devices.length}',
+                          color: DriveOSColors.primaryBlue,
                         ),
                       ),
-              ),
-            ],
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _TelemetryStatTile(
+                          label: loc.translate('active_links_count'),
+                          value: '${vm.registrations.length}',
+                          color: DriveOSColors.secondaryTeal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (vm.errorMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+                    child: AuthErrorBanner(message: vm.errorMessage!),
+                  ),
+                Expanded(
+                  child: DriveOSContentTransition(
+                    child: vm.isLoading && vm.dtcAlerts.isEmpty
+                        ? const DriveOSSkeletonCardList(
+                            key: ValueKey('telemetry_skeleton'),
+                          )
+                        : vm.dtcAlerts.isEmpty
+                            ? Center(
+                                key: const ValueKey('telemetry_empty'),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const DriveOSEmptyStateIcon(
+                                      icon: Icons.sensors_outlined,
+                                      color: DriveOSColors.secondaryTeal,
+                                    ),
+                                    const SizedBox(height: 14),
+                                    Text(
+                                      loc.translate('no_dtc_alerts'),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: DriveOSColors.graphiteText,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : DriveOSPullToRefresh(
+                                key: const ValueKey('telemetry_list'),
+                                onRefresh: () =>
+                                    vm.loadTelemetry(widget.branchId),
+                                child: ListView.separated(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    12,
+                                    16,
+                                    110,
+                                  ),
+                                  itemCount: vm.dtcAlerts.length,
+                                  separatorBuilder: (_, _) =>
+                                      const SizedBox(height: 12),
+                                  itemBuilder: (context, index) =>
+                                      _DtcAlertCard(alert: vm.dtcAlerts[index]),
+                                ),
+                              ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

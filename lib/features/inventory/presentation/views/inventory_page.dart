@@ -3,7 +3,10 @@ import 'package:mobile_application_driveos/core/di/dependency_injection.dart';
 import 'package:mobile_application_driveos/core/localization/app_localizations.dart';
 import 'package:mobile_application_driveos/core/theme/app_theme.dart';
 import 'package:mobile_application_driveos/core/widgets/driveos_empty_state.dart';
-import 'package:mobile_application_driveos/core/widgets/driveos_top_progress_bar.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_loading_helpers.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_page_header.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_pull_to_refresh.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_skeleton.dart';
 import 'package:mobile_application_driveos/features/auth/presentation/widgets/auth_scaffold.dart';
 import 'package:mobile_application_driveos/features/inventory/domain/inventory_domain.dart';
 import 'package:mobile_application_driveos/features/inventory/presentation/controllers/inventory_view_model.dart';
@@ -152,97 +155,113 @@ class _InventoryPageState extends State<InventoryPage> {
 
         return Scaffold(
           backgroundColor: DriveOSColors.warmNeutral,
-          appBar: AppBar(
-            title: Text(loc.translate('inventory_title')),
-            actions: [
-              FilterChip(
-                label: Text(loc.translate('low_stock_only')),
-                selected: vm.lowStockOnly,
-                onSelected: vm.setLowStockOnly,
-              ),
-              const SizedBox(width: 12),
-            ],
-          ),
           floatingActionButton: FloatingActionButton.extended(
             key: const Key('fab_new_product'),
             onPressed: _showCreateProductDialog,
             icon: const Icon(Icons.add_rounded),
             label: Text(loc.translate('new_product')),
           ),
-          body: Column(
-            children: [
-              DriveOSTopProgressBar(isLoading: vm.isLoading),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                child: TextField(
-                  key: const Key('inventory_search_input'),
-                  controller: _searchController,
-                  onChanged: vm.setSearchQuery,
-                  decoration: authInputDecoration(
-                    hintText: loc.translate('search_inventory_hint'),
-                    prefixIcon: Icons.search_rounded,
+          body: DriveOSCollapsibleHeaderBody(
+            header: DriveOSPageHeader(
+              title: loc.translate('inventory_title'),
+              actions: [
+                FilterChip(
+                  label: Text(loc.translate('low_stock_only')),
+                  selected: vm.lowStockOnly,
+                  onSelected: vm.setLowStockOnly,
+                ),
+              ],
+            ),
+            body: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                  child: TextField(
+                    key: const Key('inventory_search_input'),
+                    controller: _searchController,
+                    onChanged: vm.setSearchQuery,
+                    decoration: authInputDecoration(
+                      hintText: loc.translate('search_inventory_hint'),
+                      prefixIcon: Icons.search_rounded,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 44,
-                child: ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _categories.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: 8),
-                  itemBuilder: (context, index) {
-                    final category = _categories[index];
-                    final isSelected = (category == 'ALL' &&
-                            vm.selectedCategory == null) ||
-                        vm.selectedCategory == category;
-                    return ChoiceChip(
-                      label: Text(category),
-                      selected: isSelected,
-                      onSelected: (_) => vm.setCategory(category),
-                    );
-                  },
+                SizedBox(
+                  height: 44,
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _categories.length,
+                    separatorBuilder: (_, _) => const SizedBox(width: 8),
+                    itemBuilder: (context, index) {
+                      final category = _categories[index];
+                      final isSelected = (category == 'ALL' &&
+                              vm.selectedCategory == null) ||
+                          vm.selectedCategory == category;
+                      return ChoiceChip(
+                        label: Text(category),
+                        selected: isSelected,
+                        onSelected: (_) => vm.setCategory(category),
+                      );
+                    },
+                  ),
                 ),
-              ),
-              if (vm.errorMessage != null)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-                  child: AuthErrorBanner(message: vm.errorMessage!),
-                ),
-              Expanded(
-                child: items.isEmpty && !vm.isLoading
-                    ? Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const DriveOSEmptyStateIcon(
-                              icon: Icons.inventory_2_outlined,
-                              color: DriveOSColors.primaryBlue,
-                            ),
-                            const SizedBox(height: 14),
-                            Text(
-                              loc.translate('no_products'),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: DriveOSColors.graphiteText,
+                if (vm.errorMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+                    child: AuthErrorBanner(message: vm.errorMessage!),
+                  ),
+                Expanded(
+                  child: DriveOSContentTransition(
+                    child: vm.isLoading && items.isEmpty
+                        ? const DriveOSSkeletonCardList(
+                            key: ValueKey('inventory_skeleton'),
+                          )
+                        : items.isEmpty
+                            ? Center(
+                                key: const ValueKey('inventory_empty'),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const DriveOSEmptyStateIcon(
+                                      icon: Icons.inventory_2_outlined,
+                                      color: DriveOSColors.primaryBlue,
+                                    ),
+                                    const SizedBox(height: 14),
+                                    Text(
+                                      loc.translate('no_products'),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: DriveOSColors.graphiteText,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : DriveOSPullToRefresh(
+                                key: const ValueKey('inventory_list'),
+                                onRefresh: () =>
+                                    vm.loadProducts(widget.branchId),
+                                child: ListView.separated(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    12,
+                                    16,
+                                    110,
+                                  ),
+                                  itemCount: items.length,
+                                  separatorBuilder: (_, _) =>
+                                      const SizedBox(height: 12),
+                                  itemBuilder: (context, index) =>
+                                      _ProductCard(product: items[index]),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: () => vm.loadProducts(widget.branchId),
-                        child: ListView.separated(
-                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
-                          itemCount: items.length,
-                          separatorBuilder: (_, _) =>
-                              const SizedBox(height: 12),
-                          itemBuilder: (context, index) =>
-                              _ProductCard(product: items[index]),
-                        ),
-                      ),
-              ),
-            ],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

@@ -5,8 +5,11 @@ import 'package:mobile_application_driveos/core/localization/app_localizations.d
 import 'package:mobile_application_driveos/core/storage/session_storage.dart';
 import 'package:mobile_application_driveos/core/theme/app_theme.dart';
 import 'package:mobile_application_driveos/core/widgets/driveos_empty_state.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_loading_helpers.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_page_header.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_pull_to_refresh.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_skeleton.dart';
 import 'package:mobile_application_driveos/core/widgets/driveos_tactile_card.dart';
-import 'package:mobile_application_driveos/core/widgets/driveos_top_progress_bar.dart';
 import 'package:mobile_application_driveos/features/analytics/presentation/controllers/employee_dashboard_view_model.dart';
 import 'package:mobile_application_driveos/features/analytics/presentation/widgets/dtc_alert_banner.dart';
 import 'package:mobile_application_driveos/features/auth/application/auth_application.dart';
@@ -71,166 +74,161 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
 
         return Scaffold(
           backgroundColor: DriveOSColors.warmNeutral,
-          appBar: AppBar(
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(loc.translate('my_summary')),
-                Text(
-                  vm.activeBranchName,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: DriveOSColors.graphiteText.withValues(alpha: 0.65),
-                  ),
+          body: DriveOSCollapsibleHeaderBody(
+            header: DriveOSPageHeader(
+              title: loc.translate('my_summary'),
+              subtitle: vm.activeBranchName,
+              actions: [
+                IconButton(
+                  tooltip: loc.translate('sign_out'),
+                  icon: const Icon(Icons.logout_rounded, color: Colors.white),
+                  onPressed: _signOut,
                 ),
               ],
             ),
-            actions: [
-              IconButton(
-                tooltip: loc.translate('sign_out'),
-                icon: const Icon(Icons.logout_rounded),
-                onPressed: _signOut,
-              ),
-            ],
-          ),
-          body: Column(
-            children: [
-              DriveOSTopProgressBar(isLoading: vm.isLoading),
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: vm.refresh,
-                  child: ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 110),
-                    children: [
-                      if (vm.error != null) AuthErrorBanner(message: vm.error!),
-                      if (summary != null &&
-                          summary.activeDtcAlertsCount > 0) ...[
-                        DtcAlertBanner(
-                          alertCount: summary.activeDtcAlertsCount,
-                          onDetailsPressed: widget.onNavigateToTelemetry,
-                        ),
-                        const SizedBox(height: 16),
-                      ],
-                      Row(
+            body: DriveOSContentTransition(
+              child: vm.isLoading && summary == null
+                  ? const DriveOSSkeletonDetail(
+                      key: ValueKey('employee_dashboard_skeleton'),
+                    )
+                  : DriveOSPullToRefresh(
+                      key: const ValueKey('employee_dashboard_content'),
+                      skeleton: const DriveOSSkeletonDetail(),
+                      onRefresh: vm.refresh,
+                      child: ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 110),
                         children: [
-                          Expanded(
-                            child: _TechKpiCard(
-                              label: loc.translate('assigned_orders'),
-                              value: '${summary?.assignedWorkOrdersCount ?? 0}',
-                              color: DriveOSColors.primaryBlue,
-                              onTap: widget.onNavigateToOrders,
+                          if (vm.error != null)
+                            AuthErrorBanner(message: vm.error!),
+                          if (summary != null &&
+                              summary.activeDtcAlertsCount > 0) ...[
+                            DtcAlertBanner(
+                              alertCount: summary.activeDtcAlertsCount,
+                              onDetailsPressed: widget.onNavigateToTelemetry,
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: _TechKpiCard(
-                              label: loc.translate('pending_tasks'),
-                              value: '${summary?.pendingTasksCount ?? 0}',
-                              color: DriveOSColors.severityAmber,
-                              onTap: widget.onNavigateToOrders,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: _TechKpiCard(
-                              label: loc.translate('completed_tasks'),
-                              value: '${summary?.completedTasksCount ?? 0}',
-                              color: DriveOSColors.preventiveGreen,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        loc.translate('assigned_work_orders_title'),
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800,
-                          color: DriveOSColors.graphiteText,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      if (assignedOrders.isEmpty)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 28),
-                          child: Column(
+                            const SizedBox(height: 16),
+                          ],
+                          Row(
                             children: [
-                              const DriveOSEmptyStateIcon(
-                                icon: Icons.build_outlined,
-                                color: DriveOSColors.primaryBlue,
+                              Expanded(
+                                child: _TechKpiCard(
+                                  label: loc.translate('assigned_orders'),
+                                  value:
+                                      '${summary?.assignedWorkOrdersCount ?? 0}',
+                                  color: DriveOSColors.primaryBlue,
+                                  onTap: widget.onNavigateToOrders,
+                                ),
                               ),
-                              const SizedBox(height: 12),
-                              Text(
-                                loc.translate('no_assigned_orders'),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: DriveOSColors.graphiteText,
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: _TechKpiCard(
+                                  label: loc.translate('pending_tasks'),
+                                  value: '${summary?.pendingTasksCount ?? 0}',
+                                  color: DriveOSColors.severityAmber,
+                                  onTap: widget.onNavigateToOrders,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: _TechKpiCard(
+                                  label: loc.translate('completed_tasks'),
+                                  value: '${summary?.completedTasksCount ?? 0}',
+                                  color: DriveOSColors.preventiveGreen,
                                 ),
                               ),
                             ],
                           ),
-                        )
-                      else
-                        ...assignedOrders.map((item) {
-                          final number =
-                              item['number']?.toString() ?? 'Work Order';
-                          final status = item['status']?.toString() ?? '';
-                          final diagnosis =
-                              item['diagnosis']?.toString() ?? '';
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 10),
-                            padding: const EdgeInsets.all(14),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(14),
-                              border:
-                                  Border.all(color: DriveOSColors.borderSlate),
+                          const SizedBox(height: 20),
+                          Text(
+                            loc.translate('assigned_work_orders_title'),
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                              color: DriveOSColors.graphiteText,
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      number,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w800,
-                                        color: DriveOSColors.primaryBlue,
-                                      ),
-                                    ),
-                                    Text(
-                                      status,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
-                                        color: DriveOSColors.graphiteText,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                if (diagnosis.isNotEmpty) ...[
-                                  const SizedBox(height: 6),
+                          ),
+                          const SizedBox(height: 10),
+                          if (assignedOrders.isEmpty)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 28),
+                              child: Column(
+                                children: [
+                                  const DriveOSEmptyStateIcon(
+                                    icon: Icons.build_outlined,
+                                    color: DriveOSColors.primaryBlue,
+                                  ),
+                                  const SizedBox(height: 12),
                                   Text(
-                                    diagnosis,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: DriveOSColors.graphiteText
-                                          .withValues(alpha: 0.72),
+                                    loc.translate('no_assigned_orders'),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: DriveOSColors.graphiteText,
                                     ),
                                   ),
                                 ],
-                              ],
-                            ),
-                          );
-                        }),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+                              ),
+                            )
+                          else
+                            ...assignedOrders.map((item) {
+                              final number =
+                                  item['number']?.toString() ?? 'Work Order';
+                              final status = item['status']?.toString() ?? '';
+                              final diagnosis =
+                                  item['diagnosis']?.toString() ?? '';
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 10),
+                                padding: const EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: DriveOSColors.borderSlate,
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          number,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w800,
+                                            color: DriveOSColors.primaryBlue,
+                                          ),
+                                        ),
+                                        Text(
+                                          status,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w700,
+                                            color: DriveOSColors.graphiteText,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    if (diagnosis.isNotEmpty) ...[
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        diagnosis,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: DriveOSColors.graphiteText
+                                              .withValues(alpha: 0.72),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              );
+                            }),
+                        ],
+                      ),
+                    ),
+            ),
           ),
         );
       },

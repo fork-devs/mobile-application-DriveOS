@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_application_driveos/core/localization/app_localizations.dart';
 import 'package:mobile_application_driveos/core/theme/app_theme.dart';
-import 'package:mobile_application_driveos/core/widgets/driveos_primary_pill_button.dart';
+import 'package:mobile_application_driveos/core/widgets/driveos_liquid_button.dart';
 import 'package:mobile_application_driveos/features/core/domain/core_domain.dart';
 
 /// Image-first DriveOS branch card supporting banner photos with a navy-gradient
@@ -98,14 +98,12 @@ class BranchListCard extends StatelessWidget {
                       ),
                     ],
                     const SizedBox(height: 14),
-                    SizedBox(
-                      width: double.infinity,
-                      child: DriveOSPrimaryPillButton(
-                        key: Key('btn_enter_branch_${branch.code}'),
-                        icon: Icons.arrow_forward_rounded,
-                        label: loc.translate('enter_branch'),
-                        onPressed: onEnter,
-                      ),
+                    DriveOSLiquidButton(
+                      key: Key('btn_enter_branch_${branch.code}'),
+                      icon: Icons.arrow_forward_rounded,
+                      label: loc.translate('enter_branch'),
+                      expand: true,
+                      onPressed: onEnter,
                     ),
                   ],
                 ),
