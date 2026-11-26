@@ -357,6 +357,21 @@ class ApiConstants {
       '/api/v1/obd2-device-registrations/$registrationId/dtc-alerts';
 
   // Analytics (erp-analytics-service)
+  static const String analyticsSummary = '/api/v1/analytics/summary';
+  static const String analyticsRevenueTrend =
+      '/api/v1/analytics/revenue/trend';
+  static const String analyticsNetworkSummary =
+      '/api/v1/analytics/network/summary';
+  static const String analyticsCustomerSummary =
+      '/api/v1/analytics/me/customer-summary';
+  static const String analyticsEmployeeSummary =
+      '/api/v1/analytics/me/employee-summary';
+
+  /// Returns the branch analytics summary endpoint for [branchId].
   static String branchAnalyticsSummary(String branchId) =>
       '/api/v1/analytics/branches/$branchId/summary';
+
+  /// Returns the branch financial series endpoint for [branchId].
+  static String branchAnalyticsFinancial(String branchId) =>
+      '/api/v1/analytics/branches/$branchId/financial';
 }
