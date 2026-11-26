@@ -186,6 +186,13 @@ class AppLocalizations {
       'checkin_appointment': 'Check in',
       'complete_appointment': 'Complete',
       'cancel_appointment': 'Cancel',
+      'inventory_title': 'Inventory',
+      'search_inventory_hint': 'Search by name or SKU...',
+      'low_stock_only': 'Low stock',
+      'new_product': 'New product',
+      'no_products': 'No inventory products found',
+      'in_stock_label': 'In stock',
+      'min_stock_label': 'Min',
     },
     'es': {
       'app_title': 'DriveOS Workshop',
@@ -328,6 +335,13 @@ class AppLocalizations {
       'checkin_appointment': 'Check-in',
       'complete_appointment': 'Completar',
       'cancel_appointment': 'Cancelar',
+      'inventory_title': 'Inventario',
+      'search_inventory_hint': 'Buscar por nombre o SKU...',
+      'low_stock_only': 'Stock bajo',
+      'new_product': 'Nuevo producto',
+      'no_products': 'No hay productos en inventario',
+      'in_stock_label': 'Stock',
+      'min_stock_label': 'Mín',
     },
   };
 
