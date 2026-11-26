@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:mobile_application_driveos/core/domain/event/domain_event.dart';
 import 'package:mobile_application_driveos/core/domain/event/domain_event_bus.dart';
 import 'package:mobile_application_driveos/core/storage/session_storage.dart';
 import 'package:mobile_application_driveos/features/analytics/application/analytics_application.dart';
 import 'package:mobile_application_driveos/features/analytics/domain/analytics_domain.dart';
-import 'package:mobile_application_driveos/features/core/domain/events/core_events.dart';
 
 /// Presentation ViewModel powering the workshop administrator dashboard.
 class DashboardViewModel extends ChangeNotifier {
@@ -18,8 +18,8 @@ class DashboardViewModel extends ChangeNotifier {
   DashboardViewModel({
     required this._getAnalytics,
     required this._sessionStorage,
-    DomainEventBus? eventBus,
-  }) : _eventBus = eventBus {
+    this._eventBus,
+  }) {
     _branchSubscription =
         _eventBus?.on<ActiveBranchChangedEvent>().listen((_) => refresh());
   }
