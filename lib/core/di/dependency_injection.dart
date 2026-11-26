@@ -21,6 +21,8 @@ import 'package:mobile_application_driveos/features/core/presentation/controller
 import 'package:mobile_application_driveos/features/customer/presentation/controllers/customer_home_view_model.dart';
 import 'package:mobile_application_driveos/features/analytics/presentation/controllers/dashboard_view_model.dart';
 import 'package:mobile_application_driveos/features/analytics/presentation/controllers/employee_dashboard_view_model.dart';
+import 'package:mobile_application_driveos/features/operations/presentation/controllers/work_order_detail_view_model.dart';
+import 'package:mobile_application_driveos/features/operations/presentation/controllers/work_orders_view_model.dart';
 import 'package:mobile_application_driveos/features/fleet/application/fleet_application.dart';
 import 'package:mobile_application_driveos/features/fleet/domain/fleet_domain.dart';
 import 'package:mobile_application_driveos/features/fleet/infrastructure/remote/appointment_api.dart';
@@ -683,6 +685,24 @@ void setupDependencies() {
         getAnalytics: getIt<GetAnalytics>(),
         sessionStorage: getIt<SessionStorage>(),
         eventBus: getIt<DomainEventBus>(),
+      ),
+    );
+  }
+  if (!getIt.isRegistered<WorkOrdersViewModel>()) {
+    getIt.registerFactory<WorkOrdersViewModel>(
+      () => WorkOrdersViewModel(
+        manageWorkOrders: getIt<ManageWorkOrders>(),
+        sessionStorage: getIt<SessionStorage>(),
+        eventBus: getIt<DomainEventBus>(),
+      ),
+    );
+  }
+  if (!getIt.isRegistered<WorkOrderDetailViewModel>()) {
+    getIt.registerFactory<WorkOrderDetailViewModel>(
+      () => WorkOrderDetailViewModel(
+        manageWorkOrders: getIt<ManageWorkOrders>(),
+        manageTasks: getIt<ManageWorkOrderTasks>(),
+        manageEvidences: getIt<ManageEvidencesAndSupplements>(),
       ),
     );
   }
