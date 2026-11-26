@@ -13,6 +13,7 @@ import 'package:mobile_application_driveos/features/auth/application/auth_applic
 import 'package:mobile_application_driveos/features/customer/presentation/views/customer_home_page.dart';
 import 'package:mobile_application_driveos/features/fleet/presentation/views/appointments_page.dart';
 import 'package:mobile_application_driveos/features/inventory/presentation/views/inventory_page.dart';
+import 'package:mobile_application_driveos/features/iot/presentation/views/telemetry_dashboard_page.dart';
 import 'package:mobile_application_driveos/features/operations/presentation/views/work_orders_page.dart';
 
 class _NavDestinationSpec {
@@ -179,12 +180,7 @@ class _MainPageState extends State<MainPage>
           labelKey: 'telemetry_tab',
           page: override != null && override.length > 4
               ? override[4]
-              : _ShellTabScaffold(
-                  titleKey: 'telemetry_tab',
-                  icon: Icons.sensors_outlined,
-                  onSwitchBranch: () => context.go('/branches'),
-                  onSignOut: _signOut,
-                ),
+              : const TelemetryDashboardPage(),
         ),
       ];
     }
@@ -223,12 +219,7 @@ class _MainPageState extends State<MainPage>
         labelKey: 'telemetry_tab',
         page: override != null && override.length > 2
             ? override[2]
-            : _ShellTabScaffold(
-                titleKey: 'telemetry_tab',
-                icon: Icons.sensors_outlined,
-                onSwitchBranch: () => context.go('/branches'),
-                onSignOut: _signOut,
-              ),
+            : const TelemetryDashboardPage(),
       ),
     ];
   }

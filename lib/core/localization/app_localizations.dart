@@ -193,6 +193,13 @@ class AppLocalizations {
       'no_products': 'No inventory products found',
       'in_stock_label': 'In stock',
       'min_stock_label': 'Min',
+      'telemetry_title': 'Telemetry & OBD2',
+      'critical_severity': 'Critical',
+      'warning_severity': 'Warning',
+      'obd2_devices_count': 'OBD2 Devices',
+      'active_links_count': 'Active Links',
+      'register_obd2': 'Register OBD2',
+      'no_dtc_alerts': 'No active DTC alerts',
     },
     'es': {
       'app_title': 'DriveOS Workshop',
@@ -342,6 +349,13 @@ class AppLocalizations {
       'no_products': 'No hay productos en inventario',
       'in_stock_label': 'Stock',
       'min_stock_label': 'Mín',
+      'telemetry_title': 'Telemetría y OBD2',
+      'critical_severity': 'Críticas',
+      'warning_severity': 'Advertencias',
+      'obd2_devices_count': 'Dispositivos OBD2',
+      'active_links_count': 'Enlaces Activos',
+      'register_obd2': 'Registrar OBD2',
+      'no_dtc_alerts': 'Sin alertas DTC activas',
     },
   };
 
