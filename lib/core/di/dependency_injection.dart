@@ -20,6 +20,12 @@ import 'package:mobile_application_driveos/features/fleet/infrastructure/remote/
 import 'package:mobile_application_driveos/features/fleet/infrastructure/remote/customer_vehicle_api.dart';
 import 'package:mobile_application_driveos/features/fleet/infrastructure/remote/registration_api.dart';
 import 'package:mobile_application_driveos/features/fleet/infrastructure/repositories/fleet_repository_impl.dart';
+import 'package:mobile_application_driveos/features/operations/application/operations_application.dart';
+import 'package:mobile_application_driveos/features/operations/domain/operations_domain.dart';
+import 'package:mobile_application_driveos/features/operations/infrastructure/remote/service_api.dart';
+import 'package:mobile_application_driveos/features/operations/infrastructure/remote/work_order_api.dart';
+import 'package:mobile_application_driveos/features/operations/infrastructure/remote/work_order_task_api.dart';
+import 'package:mobile_application_driveos/features/operations/infrastructure/repositories/operations_repository_impl.dart';
 
 /// Global [GetIt] service locator instance for DriveOS Mobile.
 final GetIt getIt = GetIt.instance;
@@ -409,6 +415,59 @@ void setupDependencies() {
   if (!getIt.isRegistered<ManageEmployeeRegistrations>()) {
     getIt.registerLazySingleton<ManageEmployeeRegistrations>(
       () => ManageEmployeeRegistrations(getIt<FleetRepository>()),
+    );
+  }
+
+  // Operations (Work Orders) Bounded Context
+  if (!getIt.isRegistered<WorkOrderApi>()) {
+    getIt.registerLazySingleton<WorkOrderApi>(
+      () => WorkOrderApi(getIt<ApiClient>()),
+    );
+  }
+
+  if (!getIt.isRegistered<WorkOrderTaskApi>()) {
+    getIt.registerLazySingleton<WorkOrderTaskApi>(
+      () => WorkOrderTaskApi(getIt<ApiClient>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ServiceApi>()) {
+    getIt.registerLazySingleton<ServiceApi>(
+      () => ServiceApi(getIt<ApiClient>()),
+    );
+  }
+
+  if (!getIt.isRegistered<OperationsRepository>()) {
+    getIt.registerLazySingleton<OperationsRepository>(
+      () => OperationsRepositoryImpl(
+        workOrderApi: getIt<WorkOrderApi>(),
+        taskApi: getIt<WorkOrderTaskApi>(),
+        serviceApi: getIt<ServiceApi>(),
+      ),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageWorkOrders>()) {
+    getIt.registerLazySingleton<ManageWorkOrders>(
+      () => ManageWorkOrders(getIt<OperationsRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageWorkOrderTasks>()) {
+    getIt.registerLazySingleton<ManageWorkOrderTasks>(
+      () => ManageWorkOrderTasks(getIt<OperationsRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageEvidencesAndSupplements>()) {
+    getIt.registerLazySingleton<ManageEvidencesAndSupplements>(
+      () => ManageEvidencesAndSupplements(getIt<OperationsRepository>()),
+    );
+  }
+
+  if (!getIt.isRegistered<ManageWorkshopServices>()) {
+    getIt.registerLazySingleton<ManageWorkshopServices>(
+      () => ManageWorkshopServices(getIt<OperationsRepository>()),
     );
   }
 }
