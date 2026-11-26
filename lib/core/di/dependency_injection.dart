@@ -8,6 +8,9 @@ import 'package:mobile_application_driveos/features/auth/domain/auth_domain.dart
 import 'package:mobile_application_driveos/features/auth/infrastructure/remote/auth_api.dart';
 import 'package:mobile_application_driveos/features/auth/infrastructure/remote/user_api.dart';
 import 'package:mobile_application_driveos/features/auth/infrastructure/repositories/auth_repository_impl.dart';
+import 'package:mobile_application_driveos/features/auth/presentation/controllers/forgot_password_view_model.dart';
+import 'package:mobile_application_driveos/features/auth/presentation/controllers/login_view_model.dart';
+import 'package:mobile_application_driveos/features/auth/presentation/controllers/register_view_model.dart';
 import 'package:mobile_application_driveos/features/core/application/core_application.dart';
 import 'package:mobile_application_driveos/features/core/domain/core_domain.dart';
 import 'package:mobile_application_driveos/features/core/infrastructure/remote/branch_api.dart';
@@ -611,6 +614,30 @@ void setupDependencies() {
   if (!getIt.isRegistered<ManageMediaAndHealth>()) {
     getIt.registerLazySingleton<ManageMediaAndHealth>(
       () => ManageMediaAndHealth(getIt<SharedRepository>()),
+    );
+  }
+
+  // Auth Presentation ViewModels
+  if (!getIt.isRegistered<LoginViewModel>()) {
+    getIt.registerFactory<LoginViewModel>(
+      () => LoginViewModel(loginWithPassword: getIt<LoginWithPassword>()),
+    );
+  }
+  if (!getIt.isRegistered<RegisterViewModel>()) {
+    getIt.registerFactory<RegisterViewModel>(
+      () => RegisterViewModel(
+        sendOtp: getIt<SendOtp>(),
+        verifyOtp: getIt<VerifyOtp>(),
+        registerAccount: getIt<RegisterAccount>(),
+      ),
+    );
+  }
+  if (!getIt.isRegistered<ForgotPasswordViewModel>()) {
+    getIt.registerFactory<ForgotPasswordViewModel>(
+      () => ForgotPasswordViewModel(
+        forgotPassword: getIt<ForgotPassword>(),
+        resetPassword: getIt<ResetPassword>(),
+      ),
     );
   }
 }
